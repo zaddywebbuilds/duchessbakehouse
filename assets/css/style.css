@@ -137,10 +137,10 @@ h1, h2, h3, h4 {
 section { position: relative; }
 
 .section {
-  padding-block: clamp(4.5rem, 10vw, 9rem);
+  padding-block: clamp(2.75rem, 4.5vw, 4.25rem);
 }
 
-.section--tight { padding-block: clamp(3rem, 6vw, 5.5rem); }
+.section--tight { padding-block: clamp(2rem, 3vw, 2.75rem); }
 
 .eyebrow {
   display: inline-flex;
@@ -179,7 +179,7 @@ section { position: relative; }
 }
 
 .section-head {
-  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+  margin-bottom: clamp(1.6rem, 2.6vw, 2.4rem);
 }
 
 .section-head--split {
@@ -477,9 +477,9 @@ section { position: relative; }
 .hero__inner {
   position: relative;
   display: grid;
-  gap: 2.5rem;
+  gap: 2rem;
   align-items: center;
-  padding-block: clamp(3rem, 8vh, 6rem);
+  padding-block: clamp(2rem, 4vh, 3rem);
 }
 @media (min-width: 1000px) {
   .hero__inner { grid-template-columns: 1.08fr .92fr; gap: 3.5rem; }
@@ -906,7 +906,10 @@ section { position: relative; }
   gap: clamp(2rem, 5vw, 4rem);
 }
 @media (min-width: 980px) {
-  .chops__layout { grid-template-columns: 1fr 1fr; align-items: start; }
+  .chops__layout { grid-template-columns: 1fr 1fr; align-items: stretch; }
+  /* Fill the column instead of leaving dead space under a fixed-ratio box.
+     Scoped with .chops so it beats the base rule further down this file. */
+  .chops .chops__visual { aspect-ratio: auto; height: 100%; min-height: 420px; }
 }
 
 .menu { display: grid; gap: .25rem; }
@@ -1104,19 +1107,10 @@ section { position: relative; }
   isolation: isolate;
   text-align: center;
   color: var(--cream-50);
-}
-.cta__bg {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-}
-.cta__bg img, .cta__bg video { width: 100%; height: 100%; object-fit: cover; }
-.cta::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(180deg, rgba(53, 16, 26, .72), rgba(53, 16, 26, .86));
+  background:
+    radial-gradient(70% 90% at 50% 0%, rgba(239, 170, 182, .22), transparent 70%),
+    radial-gradient(50% 70% at 88% 100%, rgba(232, 179, 61, .16), transparent 70%),
+    var(--plum-900);
 }
 .cta .title { color: var(--cream-50); }
 .cta .title em { color: var(--pink-300); }
