@@ -53,19 +53,33 @@ left alone rather than quietly deleted.
       `robots.txt` and `sitemap.xml` all assume `duchessbakehouse.com`. The
       preview runs on GitHub Pages.
 
-### Claims to verify or remove
+### Claims — confirmed by the owner, 2026-11-06
 
-- [ ] "500+ cakes delivered" (hero stat)
-- [ ] "48h standard notice" and the two-to-three-week wedding/December lead time
-- [ ] "70% deposit locks your date"
-- [ ] The three named testimonials — real people, with permission to publish?
-- [ ] Cake starting prices (₦35,000 to ₦280,000) and all small chops rates
-- [ ] Pickup. The concierge offers it as a *request* ("would prefer to pick up,
-      please confirm") because the site publishes delivery only.
-- [ ] The footer names six specific areas (Lekki, Ikoyi, VI, Ajah, Ikeja, Yaba)
-      while the FAQ and structured data say only Lagos Island and Mainland.
-      Those suburbs were removed from the JSON-LD as unverified; the footer copy
-      was left alone. Pick one and make them agree.
+- [x] "500+ cakes delivered"
+- [x] "48h standard notice", and two to three weeks for weddings and December
+- [x] "70% deposit locks your date"
+- [x] The three named testimonials
+- [x] Cake starting prices (₦35,000 to ₦280,000) and the small chops rates
+- [x] Delivery areas. The footer's named areas are back in the JSON-LD
+      `areaServed`, and `priceRange` now carries the confirmed range rather than
+      a vague `₦₦`. The areas sit inside the Island/Mainland coverage stated
+      elsewhere, so the two are consistent.
+
+Still unconfirmed:
+
+- [ ] **Pickup.** The concierge offers it as a request ("would prefer to pick
+      up, please confirm"). Nothing on the site says collection is available,
+      so it was never part of the claims above. Confirm separately, then either
+      make it a plain option or drop it.
+
+### Why there is no review schema
+
+The testimonials are confirmed genuine, but they are deliberately **not** marked
+up as `Review` or `aggregateRating`. Search engines restrict self-serving
+reviews published on a business's own site, and three hand-picked quotes are not
+an aggregate rating — marking them up that way invites a penalty and would not
+earn rich results anyway. Collect reviews somewhere verifiable, such as a Google
+Business Profile, and link to that instead.
 
 ### Imagery
 
