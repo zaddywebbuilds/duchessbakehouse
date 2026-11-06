@@ -164,85 +164,167 @@
     }
   })();
 
-  /* ---------------- gallery filter ---------------- */
-  (function filters() {
-    var chips = $$(".chip");
-    var cakes = $$("#gallery .cake");
-    if (!chips.length) return;
-
-    chips.forEach(function (chip) {
-      chip.addEventListener("click", function () {
-        var f = chip.dataset.filter;
-        chips.forEach(function (c) { c.setAttribute("aria-pressed", String(c === chip)); });
-
-        cakes.forEach(function (cake) {
-          var show = f === "all" || cake.dataset.cat === f;
-          cake.classList.toggle("is-hidden", !show);
-          if (show && !reduced && typeof gsap !== "undefined") {
-            gsap.fromTo(cake, { opacity: 0, y: 18, scale: .97 },
-              { opacity: 1, y: 0, scale: 1, duration: .5, ease: "power2.out", clearProps: "transform" });
-          }
-        });
-      });
-    });
-  })();
-
-  /* ---------------- lightbox ---------------- */
-  (function lightbox() {
+  /* ---------------- catalogue: filtering, detail view, ordering ---------------- */
+  (function catalogue() {
+    var cfg = window.DUCHESS || {};
     var box = $("#lightbox");
     var img = $("#lbImg");
-    var cap = $("#lbCap");
     if (!box || !img) return;
 
+    var chips = $$(".chip");
+    var cakes = $$("#gallery .cake");
     var idx = 0;
     var lastFocus = null;
 
+    var elTag = $("#lbTag"), elTitle = $("#lbTitle"), elSub = $("#lbSub");
+    var elPrice = $("#lbPrice"), elSizes = $("#lbSizes"), elLead = $("#lbLead");
+    var elOrder = $("#lbOrder");
+
+    /* Contact details live in catalogue.js. Any link still carrying the
+       documented stand-in digits is rewritten here, so the real number only
+       ever has to be set in that one file. */
+    if (cfg.placeholder && cfg.whatsapp && !cfg.whatsappIsPlaceholder) {
+      $$('a[href*="' + cfg.placeholder + '"]').forEach(function (a) {
+        a.href = a.getAttribute("href").split(cfg.placeholder).join(cfg.whatsapp);
+      });
+    }
+
+    if (elSizes && cfg.sizes) {
+      cfg.sizes.forEach(function (s) {
+        var row = document.createElement("div");
+        var b = document.createElement("b");
+        b.textContent = s.label;
+        var sp = document.createElement("span");
+        sp.textContent = s.serves;
+        row.appendChild(b);
+        row.appendChild(sp);
+        elSizes.appendChild(row);
+      });
+    }
+    if (elPrice && cfg.priceNote) elPrice.textContent = cfg.priceNote;
+    if (elLead && cfg.leadNote) elLead.textContent = cfg.leadNote;
+
     function visible() {
-      return $$("#gallery .cake").filter(function (c) { return !c.classList.contains("is-hidden"); });
+      return cakes.filter(function (c) { return !c.classList.contains("is-hidden"); });
+    }
+
+    function data(fig) {
+      var i = $("img", fig);
+      var strong = $("figcaption strong", fig);
+      var span = $("figcaption span", fig);
+      var tag = $(".cake__tag", fig);
+      return {
+        slug: fig.dataset.slug || "",
+        name: strong ? strong.textContent.trim() : "This design",
+        sub: span ? span.textContent.trim() : "",
+        tag: tag ? tag.textContent.trim() : (fig.dataset.cat || ""),
+        src: i ? i.src : "",
+        alt: i ? i.alt : ""
+      };
+    }
+
+    /* No per-cake price is published, so the message asks for a quote and
+       carries the design reference rather than stating a figure. */
+    function orderLink(d) {
+      var msg = "Hi Duchess Bakehouse, I would like to order the " + d.name +
+                " design (ref: " + d.slug + "). Please send me a quote.";
+      return "https://wa.me/" + (cfg.whatsapp || "") + "?text=" + encodeURIComponent(msg);
+    }
+
+    function setParam(key, val) {
+      try {
+        var u = new URL(window.location.href);
+        if (val) u.searchParams.set(key, val); else u.searchParams.delete(key);
+        history.replaceState(null, "", u);
+      } catch (e) { /* deep links are a nicety; never block the UI over them */ }
     }
 
     function show(i) {
       var list = visible();
       if (!list.length) return;
       idx = (i + list.length) % list.length;
-      var fig = list[idx];
-      var src = $("img", fig);
-      img.src = src.src;
-      img.alt = src.alt;
-      var strong = $("figcaption strong", fig);
-      var span = $("figcaption span", fig);
-      cap.innerHTML = "";
-      if (strong) cap.appendChild(document.createTextNode(strong.textContent));
-      if (span) {
-        var s = document.createElement("span");
-        s.textContent = span.textContent;
-        cap.appendChild(s);
+      var d = data(list[idx]);
+
+      img.src = d.src;
+      img.alt = d.alt;
+      if (elTag) elTag.textContent = d.tag;
+      if (elTitle) elTitle.textContent = d.name;
+      if (elSub) elSub.textContent = d.sub;
+      if (elOrder) {
+        elOrder.href = orderLink(d);
+        elOrder.setAttribute("aria-label", "Order the " + d.name + " design on WhatsApp");
       }
+      setParam("cake", d.slug);
+    }
+
+    var FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    function trapTab(e) {
+      var f = $$(FOCUSABLE, box).filter(function (n) { return n.offsetParent !== null; });
+      if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     }
 
     function open(i) {
       lastFocus = document.activeElement;
       show(i);
       box.classList.add("is-open");
+      box.removeAttribute("aria-hidden");
       document.body.classList.add("is-locked");
+      /* The dialog transitions out of visibility:hidden, and a hidden element
+         cannot take focus, so flush style before moving focus into it. */
+      void box.offsetWidth;
       $("#lbClose").focus();
     }
 
     function close() {
       box.classList.remove("is-open");
+      box.setAttribute("aria-hidden", "true");
       document.body.classList.remove("is-locked");
-      if (lastFocus) lastFocus.focus();
+      setParam("cake", null);
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
     }
 
-    $$("#gallery .cake").forEach(function (fig) {
+    cakes.forEach(function (fig) {
       function trigger() { open(visible().indexOf(fig)); }
       fig.addEventListener("click", trigger);
-      fig.addEventListener("keydown", function (e) {
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); trigger(); }
+
+      /* The caption button becomes the single tab stop for the card, so a
+         keyboard user gets one labelled control instead of a bare figure. */
+      fig.removeAttribute("tabindex");
+      var cap = $("figcaption", fig);
+      if (cap) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "cake__view";
+        btn.textContent = "View details";
+        btn.setAttribute("aria-label", "View details for " + data(fig).name);
+        btn.addEventListener("click", function (e) { e.stopPropagation(); trigger(); });
+        cap.appendChild(btn);
+      }
+    });
+
+    function applyFilter(f, animate) {
+      chips.forEach(function (c) { c.setAttribute("aria-pressed", String(c.dataset.filter === f)); });
+      cakes.forEach(function (cake) {
+        var on = f === "all" || cake.dataset.cat === f;
+        cake.classList.toggle("is-hidden", !on);
+        if (on && animate && !reduced && typeof gsap !== "undefined") {
+          gsap.fromTo(cake, { opacity: 0, y: 18, scale: .97 },
+            { opacity: 1, y: 0, scale: 1, duration: .5, ease: "power2.out", clearProps: "transform" });
+        }
       });
+      setParam("filter", f === "all" ? null : f);
+    }
+
+    chips.forEach(function (chip) {
+      chip.addEventListener("click", function () { applyFilter(chip.dataset.filter, true); });
     });
 
     $("#lbClose").addEventListener("click", close);
+    var altClose = $("#lbCloseAlt");
+    if (altClose) altClose.addEventListener("click", close);
     $("#lbPrev").addEventListener("click", function () { show(idx - 1); });
     $("#lbNext").addEventListener("click", function () { show(idx + 1); });
     box.addEventListener("click", function (e) { if (e.target === box) close(); });
@@ -250,9 +332,26 @@
     document.addEventListener("keydown", function (e) {
       if (!box.classList.contains("is-open")) return;
       if (e.key === "Escape") close();
-      if (e.key === "ArrowLeft") show(idx - 1);
-      if (e.key === "ArrowRight") show(idx + 1);
+      else if (e.key === "ArrowLeft") show(idx - 1);
+      else if (e.key === "ArrowRight") show(idx + 1);
+      else if (e.key === "Tab") trapTab(e);
     });
+
+    /* ?filter= and ?cake= make a filtered view or a single design linkable. */
+    (function deepLink() {
+      var params;
+      try { params = new URL(window.location.href).searchParams; } catch (e) { return; }
+
+      var f = params.get("filter");
+      if (f && chips.some(function (c) { return c.dataset.filter === f; })) applyFilter(f, false);
+
+      var slug = params.get("cake");
+      if (!slug) return;
+      var list = visible();
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].dataset.slug === slug) { open(i); return; }
+      }
+    })();
   })();
 
   /* ---------------- lazy videos ---------------- */
