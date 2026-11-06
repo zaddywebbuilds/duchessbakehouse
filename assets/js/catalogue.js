@@ -4,20 +4,14 @@
 window.DUCHESS = (function () {
   "use strict";
 
-  /* The stand-in digits currently sitting in the markup. Every link using them
-     is rewritten at runtime from `whatsapp` below, so the real number only ever
-     has to be set in one place. */
-  var PLACEHOLDER = "2348000000000";
-
-  /* OWNER TODO: replace with the real WhatsApp number in full international
-     form, digits only, no plus sign. While this still equals PLACEHOLDER the
-     site keeps showing the stand-in rather than inventing a number. */
-  var WHATSAPP = "2348000000000";
+  /* The one place the contact number is set. Digits only, full international
+     form, no plus sign. Every wa.me and tel: link on the page is synced to this
+     at runtime, so the copies in the markup are only a no-script fallback. */
+  var WHATSAPP = "2348104476261";
 
   return {
-    placeholder: PLACEHOLDER,
     whatsapp: WHATSAPP,
-    whatsappIsPlaceholder: WHATSAPP === PLACEHOLDER,
+    whatsappDisplay: "+234 810 447 6261",
 
     /* Mirrors the published guide in the How to order section. Serving counts
        are the bakery's own estimates. No per-cake price is published anywhere,

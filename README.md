@@ -32,9 +32,10 @@ robots.txt, sitemap.xml
 number, the size guide, occasions, delivery areas, lead times and the analytics
 switch. Nothing else hardcodes them.
 
-Setting the WhatsApp number there fixes every link on the site at once. Links
-in the markup still carry a documented stand-in (`2348000000000`), and any link
-using it is rewritten at runtime from the config.
+Changing `WHATSAPP` there moves every link on the site at once. The markup
+carries the same number so the page still works with scripting off and so
+crawlers read the right contact, and `main.js` syncs every `wa.me` and `tel:`
+link back to the config on load. Keep `telephone` in the JSON-LD in step too.
 
 ## Before go-live
 
@@ -44,9 +45,10 @@ left alone rather than quietly deleted.
 
 ### Blocking
 
-- [ ] **Real WhatsApp / phone number.** Set `WHATSAPP` in `catalogue.js`. Also
-      add `telephone` back to the JSON-LD in `index.html`; it was removed so
-      search engines are not fed a fake contact.
+- [x] ~~Real WhatsApp / phone number.~~ Set to `+234 810 447 6261`
+      (`2348104476261`) in `catalogue.js`, the markup and the JSON-LD.
+      **Still worth doing:** open each button on a real phone and confirm
+      WhatsApp opens the right chat with the message prefilled.
 - [ ] **Confirm the production domain.** `canonical`, `og:url`, `og:image`,
       `robots.txt` and `sitemap.xml` all assume `duchessbakehouse.com`. The
       preview runs on GitHub Pages.

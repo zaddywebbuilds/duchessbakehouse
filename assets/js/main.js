@@ -180,12 +180,16 @@
     var elPrice = $("#lbPrice"), elSizes = $("#lbSizes"), elLead = $("#lbLead");
     var elOrder = $("#lbOrder");
 
-    /* Contact details live in catalogue.js. Any link still carrying the
-       documented stand-in digits is rewritten here, so the real number only
-       ever has to be set in that one file. */
-    if (cfg.placeholder && cfg.whatsapp && !cfg.whatsappIsPlaceholder) {
-      $$('a[href*="' + cfg.placeholder + '"]').forEach(function (a) {
-        a.href = a.getAttribute("href").split(cfg.placeholder).join(cfg.whatsapp);
+    /* catalogue.js is the single source for the contact number. Every wa.me and
+       tel: link is synced to it here, so changing that one constant moves the
+       whole site and the markup only has to be right enough to work with
+       scripting off. */
+    if (cfg.whatsapp) {
+      $$('a[href*="wa.me/"]').forEach(function (a) {
+        a.href = a.getAttribute("href").replace(/wa\.me\/\d+/, "wa.me/" + cfg.whatsapp);
+      });
+      $$('a[href^="tel:"]').forEach(function (a) {
+        a.href = "tel:+" + cfg.whatsapp;
       });
     }
 
