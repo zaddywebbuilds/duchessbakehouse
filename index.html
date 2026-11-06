@@ -508,52 +508,52 @@
     <div class="chops__layout">
       <div class="r-up">
         <dl class="menu">
-          <div class="menu__row">
+          <div class="menu__row" data-item="Puff Puff" data-price="400" data-unit="portion">
             <dt>Puff Puff<small>Soft, golden, dusted or plain</small></dt>
-            <dd>₦400 / portion</dd>
+            <dd><span class="menu__price">₦400 / portion</span></dd>
           </div>
-          <div class="menu__row">
+          <div class="menu__row" data-item="Samosa" data-price="350" data-unit="piece">
             <dt>Samosa<small>Spiced minced beef, hand-folded</small></dt>
-            <dd>₦350 / piece</dd>
+            <dd><span class="menu__price">₦350 / piece</span></dd>
           </div>
-          <div class="menu__row">
+          <div class="menu__row" data-item="Spring Rolls" data-price="350" data-unit="piece">
             <dt>Spring Rolls<small>Vegetable and chicken</small></dt>
-            <dd>₦350 / piece</dd>
+            <dd><span class="menu__price">₦350 / piece</span></dd>
           </div>
-          <div class="menu__row">
+          <div class="menu__row" data-item="Peppered Chicken Wings" data-price="700" data-unit="piece">
             <dt>Peppered Chicken Wings<small>Grilled or fried, house pepper mix</small></dt>
-            <dd>₦700 / piece</dd>
+            <dd><span class="menu__price">₦700 / piece</span></dd>
           </div>
-          <div class="menu__row">
+          <div class="menu__row" data-item="Gizdodo" data-price="4500" data-unit="bowl">
             <dt>Gizdodo<small>Gizzard and ripe plantain in pepper sauce</small></dt>
-            <dd>₦4,500 / bowl</dd>
+            <dd><span class="menu__price">₦4,500 / bowl</span></dd>
           </div>
-          <div class="menu__row">
+          <div class="menu__row" data-item="Asun" data-price="6500" data-unit="bowl">
             <dt>Asun<small>Peppered goat meat, smoky finish</small></dt>
-            <dd>₦6,500 / bowl</dd>
+            <dd><span class="menu__price">₦6,500 / bowl</span></dd>
           </div>
-          <div class="menu__row">
+          <div class="menu__row" data-item="Meat Pie" data-price="900" data-unit="piece">
             <dt>Meat Pie<small>Buttery crust, beef and potato</small></dt>
-            <dd>₦900 / piece</dd>
+            <dd><span class="menu__price">₦900 / piece</span></dd>
           </div>
-          <div class="menu__row">
+          <div class="menu__row" data-item="Chin Chin" data-price="2500" data-unit="bag">
             <dt>Chin Chin<small>Crunchy, lightly sweet, by the bag</small></dt>
-            <dd>₦2,500 / bag</dd>
+            <dd><span class="menu__price">₦2,500 / bag</span></dd>
           </div>
         </dl>
 
         <div class="tray-grid">
-          <div class="tray">
+          <div class="tray" data-item="Small Tray" data-price="32000" data-unit="tray">
             <strong>Small Tray</strong>
             <span>50 pieces, mixed</span>
             <b>₦32,000</b>
           </div>
-          <div class="tray">
+          <div class="tray" data-item="Party Pack" data-price="60000" data-unit="tray">
             <strong>Party Pack</strong>
             <span>100 pieces, mixed</span>
             <b>₦60,000</b>
           </div>
-          <div class="tray">
+          <div class="tray" data-item="Grand Tray" data-price="125000" data-unit="tray">
             <strong>Grand Tray</strong>
             <span>200 pieces plus bowls</span>
             <b>₦125,000</b>
@@ -571,6 +571,41 @@
           one fee, one arrival time. Tell us the headcount and we will size the tray for you.
         </div>
       </div>
+    </div>
+
+    <div class="bundle r-up" id="bundle" hidden>
+      <h3 class="bundle__h">Your tray so far</h3>
+      <ul class="bundle__list" id="bundleList"></ul>
+      <p class="bundle__empty" id="bundleEmpty">Set a quantity above and it adds up here.</p>
+
+      <div class="bundle__grid">
+        <div class="field">
+          <label for="bundleGuests">How many guests <span class="field__opt">optional</span></label>
+          <input type="number" id="bundleGuests" min="1" max="5000" inputmode="numeric" placeholder="80" aria-describedby="bundleGuestsHint">
+          <p class="field__hint" id="bundleGuestsHint">Not sure how much to order? Give us the headcount and we size the tray for you.</p>
+        </div>
+        <div class="field">
+          <label for="bundleDate">Event date <span class="field__opt">optional</span></label>
+          <input type="date" id="bundleDate">
+        </div>
+      </div>
+
+      <label class="opt"><input type="checkbox" id="bundleCake"> I want a cake with this</label>
+      <p class="wiz__note" id="bundleCakeNote" hidden>
+        Build the cake side in the <a href="#concierge">concierge</a> and send that brief too,
+        or just tell us in the chat.
+      </p>
+
+      <div class="bundle__total">
+        <span class="bundle__totalLabel">Running total</span>
+        <strong id="bundleTotal">₦0</strong>
+      </div>
+      <p class="bundle__fine">
+        Added up from the published rates above. Delivery is quoted separately by area,
+        and nothing is booked until we confirm.
+      </p>
+
+      <a class="btn btn--berry btn--lg" id="bundleSend" href="#" target="_blank" rel="noopener">Send this tray on WhatsApp</a>
     </div>
   </div>
 </section>
@@ -993,5 +1028,6 @@
 <script src="assets/js/scene.js" defer></script>
 <script src="assets/js/main.js" defer></script>
 <script src="assets/js/concierge.js" defer></script>
+<script src="assets/js/chops.js" defer></script>
 </body>
 </html>

@@ -990,6 +990,147 @@ section { position: relative; }
   font-family: var(--font-display);
 }
 
+/* ---- tray builder ---- */
+.menu__row dd {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .9rem;
+}
+.menu__price { white-space: nowrap; }
+
+.qty {
+  display: inline-flex;
+  align-items: center;
+  gap: .15rem;
+  padding: .18rem;
+  border-radius: var(--r-pill);
+  background: rgba(253, 244, 228, .08);
+  border: 1px solid rgba(253, 244, 228, .18);
+}
+.qty__btn {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--cream-50);
+  font-size: 1rem;
+  line-height: 1;
+  transition: background-color .3s;
+}
+.qty__btn:hover { background: rgba(253, 244, 228, .18); }
+.qty__btn:focus-visible { outline: 2px solid var(--gold-300); outline-offset: 1px; }
+
+.qty__input {
+  width: 40px;
+  padding: .2rem 0;
+  border: 0;
+  background: transparent;
+  color: var(--cream-50);
+  font: inherit;
+  font-size: .9rem;
+  text-align: center;
+  -moz-appearance: textfield;
+}
+.qty__input::-webkit-outer-spin-button,
+.qty__input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.qty__input:focus-visible { outline: 2px solid var(--gold-300); outline-offset: 2px; border-radius: 6px; }
+
+.tray .qty { margin-top: .7rem; }
+
+/* The stepper takes roughly half a phone's width out of the price column, which
+   leaves the dish names wrapping over three lines. Give the name the full row
+   and drop price and stepper underneath it. */
+@media (max-width: 560px) {
+  .menu__row { grid-template-columns: 1fr; gap: .55rem; }
+  .menu__row dd { justify-content: space-between; }
+}
+
+.bundle {
+  margin-top: clamp(2rem, 4vw, 3rem);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border-radius: var(--r-lg);
+  background: rgba(253, 244, 228, .06);
+  border: 1px solid rgba(253, 244, 228, .16);
+}
+.bundle__h {
+  margin: 0 0 1rem;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--cream-50);
+}
+.bundle__list { list-style: none; margin: 0; padding: 0; }
+.bundle__list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .45rem 0;
+  border-bottom: 1px solid rgba(253, 244, 228, .12);
+  font-size: .92rem;
+  color: var(--cream-100);
+}
+.bundle__list b { color: var(--gold-300); font-weight: 500; white-space: nowrap; }
+.bundle__empty { margin: 0; font-size: .88rem; color: rgba(253, 244, 228, .55); }
+
+.bundle__grid {
+  display: grid;
+  gap: 0 1.2rem;
+  grid-template-columns: 1fr;
+  margin-top: 1.4rem;
+}
+@media (min-width: 620px) { .bundle__grid { grid-template-columns: 1fr 1fr; } }
+
+/* The shared field styles are written for the cream sections, so recolour them
+   here rather than forking a second set of form rules. */
+.bundle .field > label { color: var(--cream-100); }
+.bundle .field__opt,
+.bundle .field__hint { color: rgba(253, 244, 228, .55); }
+.bundle .field input {
+  background: rgba(53, 16, 26, .35);
+  border-color: rgba(253, 244, 228, .22);
+  color: var(--cream-50);
+}
+.bundle .field input:focus-visible {
+  border-color: var(--gold-300);
+  box-shadow: 0 0 0 3px rgba(253, 244, 228, .22);
+}
+.bundle .opt { color: var(--cream-100); }
+.bundle .wiz__note {
+  background: rgba(53, 16, 26, .35);
+  border-color: rgba(253, 244, 228, .16);
+  color: rgba(253, 244, 228, .72);
+}
+.bundle .wiz__note a { color: var(--gold-300); text-decoration: underline; text-underline-offset: 3px; }
+
+.bundle__total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.4rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid rgba(253, 244, 228, .18);
+}
+.bundle__totalLabel {
+  font-size: .74rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(253, 244, 228, .6);
+}
+.bundle__total strong {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 1.2rem + 1vw, 1.9rem);
+  font-weight: 500;
+  color: var(--gold-300);
+}
+.bundle__fine {
+  margin: .6rem 0 1.3rem;
+  font-size: .8rem;
+  color: rgba(253, 244, 228, .55);
+}
+
 /* ===================== craft / video trio ===================== */
 .craft-grid {
   display: grid;
