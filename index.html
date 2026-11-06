@@ -1139,7 +1139,9 @@
 
 <script src="assets/js/catalogue.js" defer></script>
 <script src="assets/js/analytics.js" defer></script>
-<script src="assets/js/three.min.js" defer></script>
+<!-- three.min.js is not loaded here on purpose. scene.js fetches it only after
+     checking reduced-motion and WebGL support, so visitors who will never see
+     the decorative layer do not download 589KB for it. -->
 <script src="assets/js/gsap.min.js" defer></script>
 <script src="assets/js/ScrollTrigger.min.js" defer></script>
 <script src="assets/js/scene.js" defer></script>

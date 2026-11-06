@@ -98,6 +98,21 @@ Decisions worth keeping if the code changes hands:
 - **Analytics are off** until enabled in `catalogue.js`, and events are named as
   enquiries. Opening WhatsApp is not a sale.
 
+## Performance notes
+
+- `three.min.js` is 589 KB, roughly 79% of all the JavaScript on the site, and
+  it powers nothing but the floating pearls behind the headline. It is no
+  longer loaded from the markup. `scene.js` checks `prefers-reduced-motion` and
+  WebGL support first, then fetches the library only if the layer will actually
+  run — previously those checks happened *after* the download.
+- Still worth a decision: the decorative layer also runs on phones, where that
+  589 KB buys background sparkle on the slowest connections. Dropping it below
+  760 px would be a one-line change in `scene.js`.
+- Videos total about 6.4 MB (`craft-macaron.mp4` alone is 3.2 MB) but are
+  `preload="none"` and fetched by an IntersectionObserver as they scroll in.
+- The synthetic preloader is gone. It used to hold a near-blank screen behind a
+  fake progress bar for up to 3.2 seconds before anything painted.
+
 ## Tested
 
 Verified in a browser at 375, 1024, 1280 and 1440 px:
