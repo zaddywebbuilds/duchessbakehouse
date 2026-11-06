@@ -31,6 +31,25 @@ window.DUCHESS = (function () {
     ],
 
     priceNote: "Priced on request. Size, flavour, finish and toppers all move the number.",
-    leadNote: "48 hours standard notice. Weddings and December dates need two to three weeks."
+    leadNote: "48 hours standard notice. Weddings and December dates need two to three weeks.",
+
+    /* Concierge options. These mirror what the site already publishes: the
+       occasion sections, the size guide above, and Lagos Island / Mainland
+       coverage. Flavours are deliberately a free-text field, because no flavour
+       list is published anywhere and a dropdown would be inventing the menu. */
+    occasions: [
+      "Birthday",
+      "Kids birthday",
+      "Wedding",
+      "Anniversary",
+      "Send-forth or graduation",
+      "Corporate or end-of-year",
+      "Other"
+    ],
+    areas: ["Lagos Island", "Lagos Mainland"],
+
+    /* The published 48 hours, expressed in days for the date picker's minimum. */
+    minNoticeDays: 2,
+    longNoticeNote: "Weddings and December dates usually need two to three weeks, so we may come back to you about this date."
   };
 })();

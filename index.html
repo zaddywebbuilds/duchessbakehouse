@@ -64,11 +64,12 @@
       <a href="#cakes">Cakes</a>
       <a href="#chops">Small Chops</a>
       <a href="#craft">The Craft</a>
+      <a href="#concierge">Custom Cake</a>
       <a href="#order">How to Order</a>
     </nav>
 
     <div style="display:flex;align-items:center;gap:.7rem">
-      <a class="btn btn--primary nav__cta" href="#order">Order a cake</a>
+      <a class="btn btn--primary nav__cta" href="#concierge">Order a cake</a>
       <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer">
         <span></span><span></span><span></span>
       </button>
@@ -83,9 +84,10 @@
       <li><a href="#cakes">Cakes</a></li>
       <li><a href="#chops">Small Chops</a></li>
       <li><a href="#craft">The Craft</a></li>
+      <li><a href="#concierge">Custom Cake</a></li>
       <li><a href="#order">How to Order</a></li>
     </ul>
-    <div class="drawer__foot"><a class="btn btn--berry btn--lg" href="#order">Start your order</a></div>
+    <div class="drawer__foot"><a class="btn btn--berry btn--lg" href="#concierge">Start your order</a></div>
   </div>
 </div>
 
@@ -117,7 +119,7 @@
       </p>
 
       <div class="hero__actions">
-        <a class="btn btn--berry btn--lg" href="#order">
+        <a class="btn btn--berry btn--lg" href="#concierge">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           Order a cake
         </a>
@@ -690,6 +692,161 @@
   </div>
 </section>
 
+<!-- ============ CONCIERGE ============ -->
+<section class="section section--lazy concierge" id="concierge">
+  <div class="shell">
+    <div class="section-head section-head--split r-up">
+      <div>
+        <span class="eyebrow">Duchess concierge</span>
+        <h2 class="title">Build your <em>cake brief</em></h2>
+      </div>
+      <p class="lede">
+        Six short steps. Nothing is booked and no price is fixed here. At the end
+        this opens WhatsApp with your brief written out, and we come back to you
+        with a quote.
+      </p>
+    </div>
+
+    <div class="wiz r-up" id="wiz">
+      <ol class="wiz__steps" id="wizSteps">
+        <li data-step="1">Occasion</li>
+        <li data-step="2">Design</li>
+        <li data-step="3">Size</li>
+        <li data-step="4">Date</li>
+        <li data-step="5">You</li>
+        <li data-step="6">Review</li>
+      </ol>
+
+      <form class="wiz__form" id="wizForm" novalidate>
+
+        <section class="wiz__panel" data-panel="1" aria-labelledby="wizH1">
+          <h3 class="wiz__h" id="wizH1" tabindex="-1">What is the cake for?</h3>
+          <div class="field">
+            <label for="wizOccasion">Occasion</label>
+            <select id="wizOccasion" name="occasion" aria-describedby="wizErrOccasion"></select>
+            <p class="field__err" id="wizErrOccasion" role="alert"></p>
+          </div>
+        </section>
+
+        <section class="wiz__panel" data-panel="2" aria-labelledby="wizH2" hidden>
+          <h3 class="wiz__h" id="wizH2" tabindex="-1">What should it look like?</h3>
+
+          <fieldset class="field">
+            <legend>Starting point</legend>
+            <label class="opt"><input type="radio" name="source" value="existing" checked> One of your designs</label>
+            <label class="opt"><input type="radio" name="source" value="own"> My own idea</label>
+          </fieldset>
+
+          <div class="field" id="wizDesignWrap">
+            <label for="wizDesign">Which design?</label>
+            <select id="wizDesign" name="design" aria-describedby="wizErrDesign"></select>
+            <p class="field__err" id="wizErrDesign" role="alert"></p>
+          </div>
+
+          <div class="field" id="wizBriefWrap" hidden>
+            <label for="wizBrief">Theme, colours and decoration</label>
+            <textarea id="wizBrief" name="brief" rows="4" aria-describedby="wizErrBrief"
+                      placeholder="Two tiers, dusty blue and gold, sugar flowers on top"></textarea>
+            <p class="field__err" id="wizErrBrief" role="alert"></p>
+          </div>
+
+          <div class="field">
+            <label for="wizInscription">Message on the cake <span class="field__opt">optional</span></label>
+            <input type="text" id="wizInscription" name="inscription" maxlength="80" placeholder="Happy 30th, Tolu">
+          </div>
+
+          <label class="opt"><input type="checkbox" id="wizHasRef" name="hasRef"> I have a reference photo</label>
+          <p class="wiz__note" id="wizRefNote" hidden>
+            WhatsApp will not let this page attach your photo for you. Send the brief
+            first, then attach the photo in the chat that opens.
+          </p>
+        </section>
+
+        <section class="wiz__panel" data-panel="3" aria-labelledby="wizH3" hidden>
+          <h3 class="wiz__h" id="wizH3" tabindex="-1">How big?</h3>
+          <div class="field">
+            <label for="wizSize">Size</label>
+            <select id="wizSize" name="size" aria-describedby="wizErrSize"></select>
+            <p class="field__err" id="wizErrSize" role="alert"></p>
+          </div>
+          <div class="field">
+            <label for="wizGuests">Roughly how many people <span class="field__opt">optional</span></label>
+            <input type="number" id="wizGuests" name="guests" min="1" max="2000" inputmode="numeric" placeholder="25">
+          </div>
+          <div class="field">
+            <label for="wizFlavour">Flavour <span class="field__opt">optional</span></label>
+            <input type="text" id="wizFlavour" name="flavour" maxlength="80" placeholder="Tell us what you like and we will say what is possible">
+          </div>
+        </section>
+
+        <section class="wiz__panel" data-panel="4" aria-labelledby="wizH4" hidden>
+          <h3 class="wiz__h" id="wizH4" tabindex="-1">When and where?</h3>
+          <div class="field">
+            <label for="wizDate">Date you need it</label>
+            <input type="date" id="wizDate" name="date" aria-describedby="wizErrDate wizDateHint">
+            <p class="field__hint" id="wizDateHint"></p>
+            <p class="field__err" id="wizErrDate" role="alert"></p>
+          </div>
+
+          <p class="wiz__note" id="wizLongNotice" hidden></p>
+
+          <fieldset class="field">
+            <legend>Delivery or pickup</legend>
+            <label class="opt"><input type="radio" name="fulfilment" value="Delivery" checked> Delivery</label>
+            <label class="opt"><input type="radio" name="fulfilment" value="Pickup"> Pickup</label>
+          </fieldset>
+
+          <div class="field" id="wizAreaWrap">
+            <label for="wizArea">Area</label>
+            <select id="wizArea" name="area" aria-describedby="wizErrArea"></select>
+            <p class="field__err" id="wizErrArea" role="alert"></p>
+          </div>
+
+          <div class="field" id="wizAddressWrap">
+            <label for="wizAddress">Address <span class="field__opt">optional, you can send it later</span></label>
+            <input type="text" id="wizAddress" name="address" maxlength="140">
+          </div>
+        </section>
+
+        <section class="wiz__panel" data-panel="5" aria-labelledby="wizH5" hidden>
+          <h3 class="wiz__h" id="wizH5" tabindex="-1">How do we reach you?</h3>
+          <div class="field">
+            <label for="wizName">Your name</label>
+            <input type="text" id="wizName" name="name" maxlength="80" autocomplete="name" aria-describedby="wizErrName">
+            <p class="field__err" id="wizErrName" role="alert"></p>
+          </div>
+          <div class="field">
+            <label for="wizPhone">Phone or WhatsApp number</label>
+            <input type="tel" id="wizPhone" name="phone" maxlength="30" autocomplete="tel" aria-describedby="wizErrPhone">
+            <p class="field__err" id="wizErrPhone" role="alert"></p>
+          </div>
+          <div class="field">
+            <label for="wizNotes">Anything else <span class="field__opt">optional</span></label>
+            <textarea id="wizNotes" name="notes" rows="3" maxlength="400"></textarea>
+          </div>
+        </section>
+
+        <section class="wiz__panel" data-panel="6" aria-labelledby="wizH6" hidden>
+          <h3 class="wiz__h" id="wizH6" tabindex="-1">Check your brief</h3>
+          <dl class="wiz__review" id="wizReview"></dl>
+          <p class="wiz__note">
+            This opens WhatsApp with the brief above. Nothing is booked and no price
+            is set until we reply.
+          </p>
+        </section>
+      </form>
+
+      <div class="wiz__nav">
+        <button class="btn btn--ghost" id="wizBack" type="button" hidden>Back</button>
+        <button class="btn btn--primary" id="wizNext" type="button">Next</button>
+        <a class="btn btn--berry" id="wizSend" href="#" target="_blank" rel="noopener" hidden>Send brief on WhatsApp</a>
+      </div>
+
+      <p class="wiz__live" id="wizLive" aria-live="polite"></p>
+    </div>
+  </div>
+</section>
+
 <!-- ============ TESTIMONIALS ============ -->
 <section class="section section--lazy quotes">
   <div class="shell">
@@ -835,5 +992,6 @@
 <script src="assets/js/ScrollTrigger.min.js" defer></script>
 <script src="assets/js/scene.js" defer></script>
 <script src="assets/js/main.js" defer></script>
+<script src="assets/js/concierge.js" defer></script>
 </body>
 </html>
