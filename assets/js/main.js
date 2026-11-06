@@ -6,35 +6,6 @@
   var $ = function (s, c) { return (c || document).querySelector(s); };
   var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
 
-  /* ---------------- preloader ---------------- */
-  (function loader() {
-    var el = $("#loader");
-    var fill = $("#loaderFill");
-    if (!el) return;
-
-    var pct = 0;
-    var timer = setInterval(function () {
-      pct = Math.min(pct + Math.random() * 18, 92);
-      if (fill) fill.style.width = pct + "%";
-    }, 130);
-
-    function finish() {
-      clearInterval(timer);
-      if (fill) fill.style.width = "100%";
-      setTimeout(function () {
-        el.classList.add("is-done");
-        document.body.classList.remove("is-locked");
-        startHero();
-      }, 260);
-    }
-
-    document.body.classList.add("is-locked");
-    if (document.readyState === "complete") finish();
-    else window.addEventListener("load", finish);
-    // never hold the page hostage to a slow video
-    setTimeout(finish, 3200);
-  })();
-
   /* ---------------- hero headline ---------------- */
   var heroStarted = false;
   function startHero() {
@@ -64,6 +35,11 @@
       .from(".float-card", { y: 44, opacity: 0, scale: .95, duration: 1, stagger: .12 }, "-=1.1")
       .from(".hero__badge", { scale: .6, opacity: 0, duration: .7, ease: "back.out(1.7)" }, "-=.45");
   }
+
+  /* Every script on the page is deferred, so the DOM is already parsed here and
+     the hero can start immediately instead of waiting on images and video the
+     way the old preloader did. */
+  startHero();
 
   /* ---------------- nav ---------------- */
   var nav = $("#nav");

@@ -4,8 +4,8 @@
     {
       "name": "duchess",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "5173"],
-      "port": 5173
+      "runtimeArgs": ["-m", "http.server", "5188"],
+      "port": 5188
     }
   ]
 }

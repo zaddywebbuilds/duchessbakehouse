@@ -137,7 +137,7 @@ h1, h2, h3, h4 {
 section { position: relative; }
 
 .section {
-  padding-block: clamp(2.75rem, 4.5vw, 4.25rem);
+  padding-block: clamp(2rem, 3vw, 3rem);
 }
 
 .section--tight { padding-block: clamp(2rem, 3vw, 2.75rem); }
@@ -179,7 +179,7 @@ section { position: relative; }
 }
 
 .section-head {
-  margin-bottom: clamp(1.6rem, 2.6vw, 2.4rem);
+  margin-bottom: clamp(1.2rem, 1.8vw, 1.7rem);
 }
 
 .section-head--split {
@@ -254,45 +254,6 @@ section { position: relative; }
   opacity: .32;
   mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E");
-}
-
-/* ===================== preloader ===================== */
-.loader {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  display: grid;
-  place-items: center;
-  background: var(--grad-blush);
-  transition: opacity .7s var(--ease), visibility .7s;
-}
-.loader.is-done { opacity: 0; visibility: hidden; }
-
-.loader__mark {
-  text-align: center;
-}
-.loader__word {
-  font-family: var(--font-display);
-  font-size: clamp(1.5rem, 4vw, 2.3rem);
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--plum-800);
-  font-weight: 500;
-}
-.loader__bar {
-  width: min(220px, 50vw);
-  height: 2px;
-  margin: 1.25rem auto 0;
-  background: rgba(77, 26, 35, .14);
-  border-radius: 2px;
-  overflow: hidden;
-}
-.loader__fill {
-  display: block;
-  height: 100%;
-  width: 0%;
-  background: var(--grad-gold);
-  transition: width .4s var(--ease-soft);
 }
 
 /* ===================== nav ===================== */
@@ -1120,7 +1081,7 @@ section { position: relative; }
   flex-wrap: wrap;
   gap: .9rem;
   justify-content: center;
-  margin-top: 2.4rem;
+  margin-top: 1.7rem;
 }
 .cta .btn--ghost {
   border-color: rgba(253, 244, 228, .45);
@@ -1133,7 +1094,7 @@ section { position: relative; }
 .footer {
   background: var(--plum-900);
   color: rgba(253, 244, 228, .72);
-  padding-block: clamp(3rem, 6vw, 4.5rem) 2rem;
+  padding-block: clamp(2.25rem, 3.6vw, 3rem) 2rem;
   font-size: .92rem;
 }
 .footer__grid {
