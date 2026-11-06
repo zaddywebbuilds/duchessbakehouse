@@ -50,6 +50,14 @@ window.DUCHESS = (function () {
 
     /* The published 48 hours, expressed in days for the date picker's minimum. */
     minNoticeDays: 2,
-    longNoticeNote: "Weddings and December dates usually need two to three weeks, so we may come back to you about this date."
+    longNoticeNote: "Weddings and December dates usually need two to three weeks, so we may come back to you about this date.",
+
+    /* OWNER TODO: set enabled to true and paste a GA4 measurement ID to switch
+       tracking on. While this is false no third-party script is loaded and
+       nothing leaves the browser. */
+    analytics: {
+      enabled: false,
+      ga4MeasurementId: ""
+    }
   };
 })();

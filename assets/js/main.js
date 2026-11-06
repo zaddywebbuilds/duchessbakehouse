@@ -269,6 +269,10 @@
     function open(i) {
       lastFocus = document.activeElement;
       show(i);
+      if (window.duchessTrack) {
+        var current = visible()[idx];
+        window.duchessTrack("cake_detail_view", { design: current ? current.dataset.slug : "" });
+      }
       box.classList.add("is-open");
       box.removeAttribute("aria-hidden");
       document.body.classList.add("is-locked");

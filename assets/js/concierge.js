@@ -175,7 +175,9 @@
     if (el("wizFlavour").value.trim()) rows.push(["Flavour", el("wizFlavour").value.trim(), 3]);
 
     rows.push(["Date", el("wizDate").value, 4]);
-    rows.push(["Fulfilment", pickup ? "Pickup" : "Delivery to " + el("wizArea").value, 4]);
+    /* Pickup is phrased as a request: the site publishes delivery across Lagos
+       but says nothing about collection, so this must not read as a promise. */
+    rows.push(["Fulfilment", pickup ? "Would prefer to pick up, please confirm" : "Delivery to " + el("wizArea").value, 4]);
     if (!pickup && el("wizAddress").value.trim()) rows.push(["Address", el("wizAddress").value.trim(), 4]);
 
     rows.push(["Name", el("wizName").value.trim(), 5]);
@@ -241,12 +243,23 @@
     save();
   }
 
+  var tracked = {};
+  function trackOnce(name) {
+    if (tracked[name] || !window.duchessTrack) return;
+    tracked[name] = true;
+    window.duchessTrack(name, {});
+  }
+
   next.addEventListener("click", function () {
     if (!validate(current)) {
       var bad = panels[current - 1].querySelector('[aria-invalid="true"]');
       if (bad) bad.focus();
       return;
     }
+    trackOnce("concierge_started");
+    /* "brief ready", not "complete": reaching the review step means the
+       customer has something to send, not that an order exists. */
+    if (current + 1 === LAST) trackOnce("concierge_brief_ready");
     go(current + 1);
   });
   back.addEventListener("click", function () { go(current - 1); });

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  The site is a single page, so there is one URL to list. The in-page sections
+  (#cakes, #concierge, #delivery and so on) are fragments, not separate
+  documents, and listing them here would be inventing routes that do not exist.
+  Add entries when real pages such as /cakes/:slug are built.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://duchessbakehouse.com/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
