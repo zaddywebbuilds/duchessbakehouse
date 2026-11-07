@@ -74,9 +74,26 @@ left alone rather than quietly deleted.
       (`2348104476261`) in `catalogue.js`, the markup and the JSON-LD.
       **Still worth doing:** open each button on a real phone and confirm
       WhatsApp opens the right chat with the message prefilled.
-- [ ] **Confirm the production domain.** `canonical`, `og:url`, `og:image`,
-      `robots.txt` and `sitemap.xml` all assume `duchessbakehouse.com`. The
-      preview runs on GitHub Pages.
+- [x] ~~Confirm the production domain.~~ Set to
+      `https://zaddywebbuilds.github.io/duchessbakehouse` across `canonical`,
+      `og:url`, `og:image`, the JSON-LD, `robots.txt`, `sitemap.xml` and the
+      page generator (2026-11-07).
+
+      **If a custom domain is added later**, change `SITE` in
+      `tools/build-collections.py`, re-run it, and search for the old host in
+      `index.html`, `robots.txt` and `sitemap.xml`.
+
+      **`robots.txt` is not actually read at this URL.** On a GitHub Pages
+      *project* site, crawlers only fetch `robots.txt` from the domain root —
+      `zaddywebbuilds.github.io/robots.txt` — which this repository does not
+      control. The file is kept because it becomes correct the moment a custom
+      domain is attached. Until then, submit `sitemap.xml` directly in Google
+      Search Console rather than relying on the `Sitemap:` line.
+
+- [ ] **The contact email may be dead.** The footer offers
+      `hello@duchessbakehouse.com`, on a domain that is not serving the site.
+      Replace it with a working address, or drop it and leave WhatsApp and the
+      phone number as the contact routes.
 
 ### Claims — confirmed by the owner, 2026-11-06
 

@@ -14,7 +14,7 @@ import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SITE = "https://duchessbakehouse.com"
+SITE = "https://zaddywebbuilds.github.io/duchessbakehouse"
 
 CATEGORIES = [
     ("birthday", "Birthday cakes in Lagos",
