@@ -300,10 +300,33 @@
       chip.addEventListener("click", function () { applyFilter(chip.dataset.filter, true); });
     });
 
-    /* Occasion cards are plain anchors to #cakes, so they still land somewhere
-       useful with scripting off. With it on they also set the matching filter. */
+    /* Each occasion card points at a real collection page, which is what
+       crawlers and no-script visitors follow. With scripting we filter the
+       gallery in place instead, since that is faster than a page load. */
     $$("[data-occasion]").forEach(function (card) {
-      card.addEventListener("click", function () { applyFilter(card.dataset.occasion, true); });
+      card.addEventListener("click", function (e) {
+        e.preventDefault();
+        applyFilter(card.dataset.occasion, true);
+        var section = $("#cakes");
+        if (section) section.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+      });
+    });
+
+    /* Featured cards link to ?cake=<slug>, which opens the dialog on load for
+       anyone without scripting. Here we skip the round trip and open it now. */
+    $$("[data-featured]").forEach(function (card) {
+      card.addEventListener("click", function (e) {
+        applyFilter("all", false);
+        var list = visible();
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].dataset.slug === card.dataset.featured) {
+            e.preventDefault();
+            open(i);
+            return;
+          }
+        }
+        /* Not found: leave the href to do the work rather than swallow the click. */
+      });
     });
 
     $("#lbClose").addEventListener("click", close);

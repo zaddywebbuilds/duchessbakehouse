@@ -15,16 +15,41 @@ Then open <http://localhost:5188>. Any static server works; the port is set in
 ## Layout
 
 ```
-index.html              every section of the page
-assets/css/style.css    all styling
-assets/js/catalogue.js  ← the file to edit for business details
-assets/js/analytics.js  optional tracking, off by default
-assets/js/main.js       nav, drawer, reveals, gallery filter, product dialog
-assets/js/concierge.js  the six-step cake brief
-assets/js/chops.js      the small chops tray builder
-assets/img/             cake-01..41 as webp + jpg pairs
+index.html               every section of the homepage
+cakes/index.html         all 40 cakes, generated
+cakes/<category>/        one page per occasion, generated
+tools/build-collections.py   regenerates the above from index.html
+assets/css/style.css     all styling
+assets/js/catalogue.js   ← the file to edit for business details
+assets/js/analytics.js   optional tracking, off by default
+assets/js/main.js        nav, drawer, reveals, gallery filter, product dialog
+assets/js/concierge.js   the six-step cake brief
+assets/js/chops.js       the small chops tray builder
+assets/img/              cake-01..41 as webp + jpg pairs
 robots.txt, sitemap.xml
 ```
+
+## Collection pages
+
+`cakes/` and `cakes/<category>/` are **generated**, never hand-edited. The
+homepage gallery is the single source of truth; the generator reads the figures
+straight out of it, so a collection page cannot list a cake the site does not
+have. After adding or recategorising a cake:
+
+```bash
+python tools/build-collections.py
+```
+
+Add any new category to the `CATEGORIES` list in that script and to
+`sitemap.xml`. The occasion cards on the homepage point at these pages, so
+crawlers and anyone without JavaScript get a real page; with JavaScript the
+click is intercepted and the gallery filters in place instead.
+
+Individual cakes are not separate pages. Forty pages each holding one photo and
+otherwise identical boilerplate is the thin-content pattern search engines
+penalise, and writing unique copy for each would mean inventing descriptions.
+Each cake is instead deep-linkable as `?cake=<slug>`, which opens its detail
+view on load.
 
 ## The one file that matters
 
@@ -92,11 +117,12 @@ Business Profile, and link to that instead.
 
 ### Not built
 
-- [ ] Separate crawlable pages (`/cakes/:slug`, `/cakes/birthday`, …). The site
-      is one page; the sitemap lists one URL rather than inventing routes.
+- [ ] Per-cake pages. See the reasoning under Collection pages above.
 - [ ] Flavour list. Deliberately a free-text field in the concierge, because no
       flavour menu is published anywhere.
 - [ ] Allergen, cancellation and refund policy; opening hours; pickup address.
+- [ ] A founder story and behind-the-scenes photography, which need owner
+      material rather than code.
 
 ## What the site will not do
 

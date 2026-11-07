@@ -682,7 +682,88 @@ section { position: relative; }
 .occ:hover img { transform: scale(1.06); }
 .occ:focus-visible { outline: 2px solid var(--berry-500); outline-offset: 3px; }
 
+/* ---- collection pages ---- */
+.crumbs {
+  margin-bottom: 1.6rem;
+  font-size: .8rem;
+  color: var(--ink-soft);
+}
+.crumbs a { color: var(--pink-600); text-decoration: underline; text-underline-offset: 3px; }
+.crumbs a:hover { color: var(--plum-900); }
+.crumbs span[aria-hidden] { margin-inline: .35rem; opacity: .5; }
+
+.coll-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .8rem;
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+
 /* ===================== gallery ===================== */
+/* A curated six first, then the full set, so forty cakes stop arriving as one
+   undifferentiated wall. */
+.sub-head {
+  margin: 0 0 1rem;
+  font-family: var(--font-body);
+  font-size: .74rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--pink-600);
+  font-weight: 600;
+}
+.featured + .sub-head { margin-top: clamp(2.2rem, 4vw, 3.2rem); }
+
+.featured {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+}
+@media (min-width: 760px) { .featured { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1100px) { .featured { grid-template-columns: repeat(6, 1fr); } }
+
+.feat {
+  position: relative;
+  display: block;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  background: var(--pink-100);
+  box-shadow: var(--shadow-sm);
+  transition: transform .45s var(--ease), box-shadow .45s var(--ease);
+}
+.feat img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .8s var(--ease);
+}
+.feat::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(53, 16, 26, 0) 45%, rgba(53, 16, 26, .82) 100%);
+}
+.feat__body {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 1;
+  display: grid;
+  gap: .12rem;
+  padding: 1rem .85rem .85rem;
+  color: var(--cream-50);
+}
+.feat__body strong { font-family: var(--font-display); font-size: .96rem; font-weight: 500; }
+.feat__body span {
+  font-size: .68rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--pink-200);
+}
+.feat:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+.feat:hover img { transform: scale(1.06); }
+.feat:focus-visible { outline: 2px solid var(--berry-500); outline-offset: 3px; }
+
 .filters {
   display: flex;
   flex-wrap: wrap;
