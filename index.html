@@ -558,6 +558,7 @@
 
     <div class="chops__layout">
       <div class="r-up">
+        <h3 class="chops__h">By the piece</h3>
         <dl class="menu">
           <div class="menu__row" data-item="Puff Puff" data-price="400" data-unit="portion">
             <dt>Puff Puff<small>Soft, golden, dusted or plain</small></dt>
@@ -593,6 +594,10 @@
           </div>
         </dl>
 
+      </div>
+
+      <div class="r-up">
+        <h3 class="chops__h">Party trays</h3>
         <div class="tray-grid">
           <div class="tray" data-item="Small Tray" data-price="32000" data-unit="tray">
             <strong>Small Tray</strong>
@@ -610,17 +615,11 @@
             <b>₦125,000</b>
           </div>
         </div>
-      </div>
 
-      <div class="chops__visual r-up">
-        <video muted loop playsinline preload="none"
-               poster="assets/img/craft-choc-poster.webp" data-lazyvid aria-label="Platter of bite-sized treats">
-          <source src="assets/video/craft-choc.mp4" type="video/mp4">
-        </video>
-        <div class="chops__note">
+        <p class="chops__note">
           <b>Bundle it.</b> Order a cake and a tray together and delivery is one trip,
           one fee, one arrival time. Tell us the headcount and we will size the tray for you.
-        </div>
+        </p>
       </div>
     </div>
 
@@ -823,11 +822,11 @@
             <label class="opt"><input type="radio" name="source" value="own"> My own idea</label>
           </fieldset>
 
-          <div class="field" id="wizDesignWrap">
-            <label for="wizDesign">Which design?</label>
-            <select id="wizDesign" name="design" aria-describedby="wizErrDesign"></select>
+          <fieldset class="field" id="wizDesignWrap">
+            <legend>Which design?</legend>
+            <div class="picker" id="wizPicker"></div>
             <p class="field__err" id="wizErrDesign" role="alert"></p>
-          </div>
+          </fieldset>
 
           <div class="field" id="wizBriefWrap" hidden>
             <label for="wizBrief">Theme, colours and decoration</label>

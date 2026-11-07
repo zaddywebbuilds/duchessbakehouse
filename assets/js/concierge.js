@@ -51,15 +51,45 @@
     return { value: s.label, label: s.label + " - " + s.serves };
   }), "Choose a size");
 
-  /* Read the design list off the gallery so it can never drift from the cakes
-     actually on the page. */
-  fill(el("wizDesign"), Array.prototype.slice
-    .call(document.querySelectorAll("#gallery .cake"))
-    .map(function (f) {
-      var strong = f.querySelector("figcaption strong");
-      return { value: f.dataset.slug || "", label: strong ? strong.textContent.trim() : f.dataset.slug };
-    })
-    .filter(function (d) { return d.value; }), "Choose a design");
+  /* People choosing a cake should be looking at cakes, not reading a dropdown.
+     Built from the gallery so it can never drift from what is on the page, and
+     from native radios so grouping and arrow-key navigation come for free. */
+  (function buildPicker() {
+    var picker = el("wizPicker");
+    if (!picker) return;
+
+    Array.prototype.slice.call(document.querySelectorAll("#gallery .cake")).forEach(function (fig) {
+      var slug = fig.dataset.slug;
+      if (!slug) return;
+
+      var source = fig.querySelector("img");
+      var strong = fig.querySelector("figcaption strong");
+
+      var label = document.createElement("label");
+      label.className = "pick";
+
+      var input = document.createElement("input");
+      input.type = "radio";
+      input.name = "design";
+      input.value = slug;
+
+      var thumb = document.createElement("img");
+      thumb.src = source ? source.getAttribute("src") : "";
+      thumb.alt = "";
+      thumb.loading = "lazy";
+      thumb.decoding = "async";
+      thumb.width = 220;
+      thumb.height = 293;
+
+      var cap = document.createElement("span");
+      cap.textContent = strong ? strong.textContent.trim() : slug;
+
+      label.appendChild(input);
+      label.appendChild(thumb);
+      label.appendChild(cap);
+      picker.appendChild(label);
+    });
+  })();
 
   /* ---------------- earliest date ---------------- */
   var minDays = typeof cfg.minNoticeDays === "number" ? cfg.minNoticeDays : 2;
@@ -121,8 +151,9 @@
         ok = setError("wizErrBrief", b.value.trim() ? "" : "Tell us roughly what you have in mind.", b) && ok;
         setError("wizErrDesign", "", el("wizDesign"));
       } else {
-        var d = el("wizDesign");
-        ok = setError("wizErrDesign", d.value ? "" : "Choose a design, or switch to your own idea.", d) && ok;
+        /* Flag the first radio so focus has somewhere to land on failure. */
+        var first = form.querySelector('input[name="design"]');
+        ok = setError("wizErrDesign", picked("design") ? "" : "Pick a design, or switch to your own idea.", first) && ok;
         setError("wizErrBrief", "", el("wizBrief"));
       }
     }
@@ -159,14 +190,16 @@
   function answers() {
     var own = picked("source") === "own";
     var pickup = picked("fulfilment") === "Pickup";
-    var sel = el("wizDesign");
-    var chosen = sel.options[sel.selectedIndex];
+    var chosen = form.querySelector('input[name="design"]:checked');
+    var chosenName = "";
+    if (chosen) {
+      var cap = chosen.parentNode.querySelector("span");
+      chosenName = (cap ? cap.textContent : chosen.value) + " (ref: " + chosen.value + ")";
+    }
     var rows = [];
 
     rows.push(["Occasion", el("wizOccasion").value, 1]);
-    rows.push(["Design", own
-      ? el("wizBrief").value.trim()
-      : (chosen ? chosen.textContent + " (ref: " + sel.value + ")" : ""), 2]);
+    rows.push(["Design", own ? el("wizBrief").value.trim() : chosenName, 2]);
     if (el("wizInscription").value.trim()) rows.push(["Message on cake", el("wizInscription").value.trim(), 2]);
     if (el("wizHasRef").checked) rows.push(["Reference photo", "Will attach in the chat", 2]);
 
@@ -295,12 +328,9 @@
   function prefillFromUrl() {
     var slug = null;
     try { slug = new URL(window.location.href).searchParams.get("cake"); } catch (e) { return; }
-    if (!slug) return;
-    var sel = el("wizDesign");
-    if (!sel) return;
-    for (var i = 0; i < sel.options.length; i++) {
-      if (sel.options[i].value === slug) { sel.selectedIndex = i; return; }
-    }
+    if (!slug || !/^[a-z0-9-]+$/.test(slug)) return;
+    var radio = form.querySelector('input[name="design"][value="' + slug + '"]');
+    if (radio) radio.checked = true;
   }
 
   form.addEventListener("input", function () { syncConditionals(); save(); });

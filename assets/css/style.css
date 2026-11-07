@@ -824,10 +824,15 @@ section { position: relative; }
   gap: clamp(2rem, 5vw, 4rem);
 }
 @media (min-width: 980px) {
-  .chops__layout { grid-template-columns: 1fr 1fr; align-items: stretch; }
-  /* Fill the column instead of leaving dead space under a fixed-ratio box.
-     Scoped with .chops so it beats the base rule further down this file. */
-  .chops .chops__visual { aspect-ratio: auto; height: 100%; min-height: 420px; }
+  .chops__layout { grid-template-columns: 1.1fr .9fr; align-items: start; }
+}
+
+.chops__h {
+  margin: 0 0 1rem;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--gold-300);
 }
 
 .menu { display: grid; gap: .25rem; }
@@ -867,26 +872,12 @@ section { position: relative; }
   white-space: nowrap;
 }
 
-.chops__visual {
-  position: relative;
-  border-radius: var(--r-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-lg);
-  aspect-ratio: 4 / 5;
-}
-.chops__visual img, .chops__visual video {
-  width: 100%; height: 100%; object-fit: cover;
-}
 .chops__note {
-  position: absolute;
-  left: 1rem;
-  right: 1rem;
-  bottom: 1rem;
+  margin: 1.6rem 0 0;
   padding: 1rem 1.2rem;
   border-radius: var(--r-md);
-  background: rgba(53, 16, 26, .66);
-  backdrop-filter: blur(14px);
-  border: 1px solid rgba(253, 244, 228, .14);
+  background: rgba(253, 244, 228, .07);
+  border: 1px solid rgba(253, 244, 228, .16);
   font-size: .88rem;
   color: var(--cream-100);
 }
@@ -1549,6 +1540,50 @@ section { position: relative; }
   cursor: pointer;
 }
 .opt input { accent-color: var(--berry-500); }
+
+/* Visual design picker. Real radios, visually hidden, so the browser handles
+   grouping, arrow keys and form state and no ARIA is needed. */
+.picker {
+  display: grid;
+  gap: .65rem;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  max-height: 350px;
+  overflow-y: auto;
+  padding: .4rem;
+  margin-inline: -.4rem;
+}
+.pick { display: block; cursor: pointer; }
+.pick input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.pick img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 12px;
+  background: var(--pink-50);
+  border: 2px solid transparent;
+  transition: border-color .25s var(--ease), transform .4s var(--ease);
+}
+.pick span {
+  display: block;
+  margin-top: .4rem;
+  font-size: .74rem;
+  line-height: 1.3;
+  color: var(--ink-soft);
+}
+.pick:hover img { transform: scale(1.03); }
+.pick input:checked + img {
+  border-color: var(--berry-500);
+  box-shadow: 0 0 0 3px rgba(224, 58, 51, .18);
+}
+.pick input:checked ~ span { color: var(--plum-900); font-weight: 600; }
+.pick input:focus-visible + img { outline: 2px solid var(--plum-900); outline-offset: 2px; }
 
 .wiz__note {
   margin: .9rem 0 0;
