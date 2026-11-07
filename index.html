@@ -24,7 +24,7 @@
 <link rel="preconnect" href="https://wa.me">
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/fraunces-3.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/outfit-5.woff2" crossorigin>
-<link rel="preload" as="image" href="assets/img/hero-poster.webp" fetchpriority="high">
+<link rel="preload" as="image" href="assets/img/cake-40.webp" fetchpriority="high">
 <link rel="stylesheet" href="assets/css/style.css">
 
 <!-- areaServed and priceRange are owner-confirmed (2026-11-06). The named areas
@@ -156,9 +156,6 @@
 
 <!-- ============ HERO ============ -->
 <section class="hero" id="top">
-  <div class="hero__wash" aria-hidden="true"></div>
-  <canvas id="scene" aria-hidden="true"></canvas>
-
   <div class="shell hero__inner">
     <div class="hero__copy">
       <div class="hero__kicker">
@@ -180,11 +177,11 @@
       </p>
 
       <div class="hero__actions">
-        <a class="btn btn--berry btn--lg" href="#concierge">
+        <a class="btn btn--berry btn--lg" href="#cakes">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          Order a cake
+          Explore our cakes
         </a>
-        <a class="btn btn--ghost btn--lg" href="#cakes">See the work</a>
+        <a class="btn btn--ghost btn--lg" href="#concierge">Create your cake</a>
       </div>
 
       <div class="hero__stats">
@@ -194,23 +191,11 @@
       </div>
     </div>
 
-    <div class="hero__cards" aria-hidden="true">
-      <div class="float-card float-card--a" data-depth="26">
-        <video id="heroVid" autoplay muted loop playsinline preload="metadata"
-               poster="assets/img/hero-poster.webp">
-          <source src="assets/video/hero.mp4" type="video/mp4">
-        </video>
-      </div>
-      <div class="float-card float-card--b" data-depth="48">
-        <img src="assets/img/cake-17.webp" alt="" width="600" height="800" loading="eager" decoding="async" fetchpriority="high">
-      </div>
-      <div class="float-card float-card--c" data-depth="16">
-        <img src="assets/img/cake-07.webp" alt="" width="500" height="667" loading="lazy" decoding="async">
-      </div>
-      <div class="hero__badge" data-depth="64">
-        <div><b>48h</b>notice is<br>all we need</div>
-      </div>
-    </div>
+    <figure class="hero__shot">
+      <img src="assets/img/cake-40.webp"
+           alt="Three tier white textured wedding cake with sugar roses, on a gold stand beneath a floral arch"
+           width="1400" height="1866" loading="eager" decoding="async" fetchpriority="high">
+    </figure>
   </div>
 
   <div class="scroll-cue" aria-hidden="true"><span>Scroll</span><i></i></div>
@@ -246,41 +231,45 @@
     </div>
 
     <div class="occ-grid">
-      <article class="occ r-up" data-tilt>
-        <span class="occ__n" aria-hidden="true">01</span>
-        <div class="occ__ico" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16v2H4zM5 13h14l-1 6H6zM12 4c1.2 1.3 1.2 2.6 0 3.9C10.8 6.6 10.8 5.3 12 4z"/><path d="M8 9v2M16 9v2"/></svg>
-        </div>
-        <h3>Birthdays</h3>
-        <p>Character cakes for the little ones, black-and-gold restraint for the grown ones. Names, ages and toppers included.</p>
-      </article>
+      <a class="occ occ--wide r-up" href="#cakes" data-occasion="birthday">
+        <img src="assets/img/cake-22.webp" alt="" width="1400" height="1866" loading="lazy" decoding="async">
+        <span class="occ__body">
+          <strong>Birthday cakes</strong>
+          <span>Character cakes for the little ones, black-and-gold restraint for the grown ones.</span>
+        </span>
+      </a>
 
-      <article class="occ r-up" data-tilt>
-        <span class="occ__n" aria-hidden="true">02</span>
-        <div class="occ__ico" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.6-7-9.4A3.6 3.6 0 0 1 12 9a3.6 3.6 0 0 1 7 2.6C19 16.4 12 21 12 21z"/></svg>
-        </div>
-        <h3>Weddings</h3>
-        <p>Tiered buttercream, piped roses, drapes and pearls. We deliver set up and standing, not boxed for you to fix.</p>
-      </article>
+      <a class="occ occ--wide r-up" href="#cakes" data-occasion="kids">
+        <img src="assets/img/cake-19.webp" alt="" width="1400" height="1866" loading="lazy" decoding="async">
+        <span class="occ__body">
+          <strong>Kids' cakes</strong>
+          <span>Minnie, Paw Patrol, Barbie, teddies and whatever they are obsessed with this month.</span>
+        </span>
+      </a>
 
-      <article class="occ r-up" data-tilt>
-        <span class="occ__n" aria-hidden="true">03</span>
-        <div class="occ__ico" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-7-7 18-2.5-8L3 11z"/></svg>
-        </div>
-        <h3>Send-forth</h3>
-        <p>Farewells, graduations and thanksgiving. Lettering on top, a message that actually fits, and enough slices for the room.</p>
-      </article>
+      <a class="occ r-up" href="#cakes" data-occasion="wedding">
+        <img src="assets/img/cake-35.webp" alt="" width="1400" height="1866" loading="lazy" decoding="async">
+        <span class="occ__body">
+          <strong>Wedding tiers</strong>
+          <span>Tiered buttercream, piped roses and pearls, delivered set up and standing.</span>
+        </span>
+      </a>
 
-      <article class="occ r-up" data-tilt>
-        <span class="occ__n" aria-hidden="true">04</span>
-        <div class="occ__ico" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21l4.5-12L19 18.5 5 21z"/><path d="M14 3v3M18.5 5.5l-2 2M21 10h-3"/></svg>
-        </div>
-        <h3>End-of-year parties</h3>
-        <p>Office closings and December gatherings. Cake plus small chops trays, quoted together and delivered in one run.</p>
-      </article>
+      <a class="occ r-up" href="#cakes" data-occasion="anniversary">
+        <img src="assets/img/cake-39.webp" alt="" width="1400" height="1866" loading="lazy" decoding="async">
+        <span class="occ__body">
+          <strong>Anniversaries</strong>
+          <span>Red roses, gold spheres and the number that matters, however many years it has been.</span>
+        </span>
+      </a>
+
+      <a class="occ r-up" href="#cakes" data-occasion="celebration">
+        <img src="assets/img/cake-21.webp" alt="" width="1400" height="1866" loading="lazy" decoding="async">
+        <span class="occ__body">
+          <strong>Send-forth &amp; thanksgiving</strong>
+          <span>Farewells, graduations, December gatherings. Lettering on top and enough slices for the room.</span>
+        </span>
+      </a>
     </div>
   </div>
 </section>
@@ -304,6 +293,7 @@
       <button class="chip" data-filter="birthday" aria-pressed="false">Birthdays</button>
       <button class="chip" data-filter="kids" aria-pressed="false">Kids</button>
       <button class="chip" data-filter="wedding" aria-pressed="false">Weddings</button>
+      <button class="chip" data-filter="anniversary" aria-pressed="false">Anniversaries</button>
       <button class="chip" data-filter="celebration" aria-pressed="false">Send-forth &amp; thanksgiving</button>
     </div>
 
@@ -363,7 +353,7 @@
         <figcaption><strong>Split Finish</strong><span>Chocolate meets vanilla</span></figcaption>
       </figure>
 
-      <figure data-slug="thirty-five-years" class="cake r-up" data-cat="wedding" data-tilt tabindex="0">
+      <figure data-slug="thirty-five-years" class="cake r-up" data-cat="anniversary" data-tilt tabindex="0">
         <img src="assets/img/cake-12.webp" alt="Two tier ivory anniversary cake with red roses, gold spheres and a thirty-five years plaque" width="700" height="933" loading="lazy" decoding="async">
         <span class="cake__tag">Anniversary</span>
         <figcaption><strong>Thirty-Five Years</strong><span>Red roses &amp; gold</span></figcaption>
@@ -531,7 +521,7 @@
         <figcaption><strong>Cherry &amp; Mint</strong><span>Piped shells &amp; cherries</span></figcaption>
       </figure>
 
-      <figure data-slug="twenty-five-years" class="cake cake--tall r-up" data-cat="wedding" data-tilt tabindex="0">
+      <figure data-slug="twenty-five-years" class="cake cake--tall r-up" data-cat="anniversary" data-tilt tabindex="0">
         <img src="assets/img/cake-39.webp" alt="Two tier cream anniversary cake with red roses, gold spheres and a twenty-five years topper" width="700" height="933" loading="lazy" decoding="async">
         <span class="cake__tag">Anniversary</span>
         <figcaption><strong>Twenty-Five Years</strong><span>Red roses &amp; gold spheres</span></figcaption>
@@ -1145,12 +1135,8 @@
 
 <script src="assets/js/catalogue.js" defer></script>
 <script src="assets/js/analytics.js" defer></script>
-<!-- three.min.js is not loaded here on purpose. scene.js fetches it only after
-     checking reduced-motion and WebGL support, so visitors who will never see
-     the decorative layer do not download 589KB for it. -->
 <script src="assets/js/gsap.min.js" defer></script>
 <script src="assets/js/ScrollTrigger.min.js" defer></script>
-<script src="assets/js/scene.js" defer></script>
 <script src="assets/js/main.js" defer></script>
 <script src="assets/js/concierge.js" defer></script>
 <script src="assets/js/chops.js" defer></script>

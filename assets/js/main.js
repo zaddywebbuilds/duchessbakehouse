@@ -15,7 +15,7 @@
     var words = $$(".hero .reveal-word > span");
     if (reduced || typeof gsap === "undefined") {
       words.forEach(function (w) { w.style.transform = "none"; });
-      $$(".hero__kicker, .hero__sub, .hero__actions, .hero__stats, .float-card, .hero__badge")
+      $$(".hero__kicker, .hero__sub, .hero__actions, .hero__stats, .hero__shot")
         .forEach(function (n) { n.style.opacity = 1; });
       return;
     }
@@ -32,8 +32,7 @@
       .from(".hero__sub", { y: 22, opacity: 0, duration: .8 }, "-=.65")
       .from(".hero__actions .btn", { y: 18, opacity: 0, duration: .65, stagger: .09 }, "-=.5")
       .from(".hero__stats div", { y: 16, opacity: 0, duration: .6, stagger: .08 }, "-=.45")
-      .from(".float-card", { y: 44, opacity: 0, scale: .95, duration: 1, stagger: .12 }, "-=1.1")
-      .from(".hero__badge", { scale: .6, opacity: 0, duration: .7, ease: "back.out(1.7)" }, "-=.45");
+      .from(".hero__shot", { y: 38, opacity: 0, scale: .97, duration: 1.1 }, "-=1.2");
   }
 
   /* Every script on the page is deferred, so the DOM is already parsed here and
@@ -133,35 +132,6 @@
       card.addEventListener("pointerleave", leave);
       card.addEventListener("blur", leave);
     });
-  })();
-
-  /* ---------------- hero card parallax ---------------- */
-  (function heroParallax() {
-    if (reduced || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
-    var layers = $$(".hero [data-depth]");
-    if (!layers.length) return;
-
-    var tx = 0, ty = 0, cx = 0, cy = 0, raf = null;
-
-    window.addEventListener("pointermove", function (e) {
-      tx = (e.clientX / window.innerWidth - 0.5);
-      ty = (e.clientY / window.innerHeight - 0.5);
-      if (!raf) raf = requestAnimationFrame(loop);
-    }, { passive: true });
-
-    function loop() {
-      cx += (tx - cx) * 0.07;
-      cy += (ty - cy) * 0.07;
-      layers.forEach(function (l) {
-        var d = parseFloat(l.dataset.depth) || 20;
-        l.style.transform =
-          "translate3d(" + (-cx * d) + "px," + (-cy * d * 0.7) + "px,0) " +
-          "rotateY(" + (-cx * d * 0.1) + "deg) rotateX(" + (cy * d * 0.08) + "deg)";
-      });
-      if (Math.abs(tx - cx) > 0.001 || Math.abs(ty - cy) > 0.001) {
-        raf = requestAnimationFrame(loop);
-      } else { raf = null; }
-    }
   })();
 
   /* ---------------- catalogue: filtering, detail view, ordering ---------------- */
@@ -330,6 +300,12 @@
       chip.addEventListener("click", function () { applyFilter(chip.dataset.filter, true); });
     });
 
+    /* Occasion cards are plain anchors to #cakes, so they still land somewhere
+       useful with scripting off. With it on they also set the matching filter. */
+    $$("[data-occasion]").forEach(function (card) {
+      card.addEventListener("click", function () { applyFilter(card.dataset.occasion, true); });
+    });
+
     $("#lbClose").addEventListener("click", close);
     var altClose = $("#lbCloseAlt");
     if (altClose) altClose.addEventListener("click", close);
@@ -385,16 +361,6 @@
     }, { rootMargin: "180px 0px", threshold: 0.2 });
 
     vids.forEach(function (v) { io.observe(v); });
-  })();
-
-  /* keep the hero video from burning cycles off-screen */
-  (function heroVideo() {
-    var v = $("#heroVid");
-    if (!v || !("IntersectionObserver" in window)) return;
-    new IntersectionObserver(function (entries) {
-      if (entries[0].isIntersecting) v.play().catch(function () {});
-      else v.pause();
-    }, { threshold: 0 }).observe(v);
   })();
 
   /* ---------------- misc ---------------- */

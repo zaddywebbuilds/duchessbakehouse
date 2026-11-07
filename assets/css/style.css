@@ -414,43 +414,28 @@ section { position: relative; }
 /* ===================== hero ===================== */
 .hero {
   position: relative;
-  min-height: 100svh;
+  min-height: min(94svh, 900px);
   display: grid;
   align-items: center;
   overflow: hidden;
   isolation: isolate;
   padding-top: var(--nav-h);
+  /* An ivory canvas. The cake photograph supplies the colour now, so the
+     background only has to stay out of its way. */
   background:
-    radial-gradient(62% 52% at 80% 26%, rgba(239, 170, 182, .62) 0%, rgba(239, 170, 182, 0) 68%),
-    radial-gradient(56% 46% at 8% 74%, rgba(249, 232, 201, .78) 0%, rgba(249, 232, 201, 0) 64%),
-    linear-gradient(168deg, var(--pink-100) 0%, var(--cream-50) 52%, var(--pink-50) 100%);
-}
-
-/* soft vignette so the floating field never fights the headline */
-.hero__wash {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  background: radial-gradient(78% 68% at 22% 46%, rgba(255, 251, 243, .9) 0%, rgba(255, 251, 243, .45) 42%, rgba(255, 251, 243, 0) 72%);
-}
-
-/* three.js canvas sits between wash and content */
-#scene {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
+    radial-gradient(64% 56% at 86% 38%, rgba(247, 221, 226, .45) 0%, rgba(247, 221, 226, 0) 70%),
+    var(--cream-50);
 }
 
 .hero__inner {
   position: relative;
   display: grid;
-  gap: 2rem;
+  gap: clamp(2rem, 4vw, 3.5rem);
   align-items: center;
-  padding-block: clamp(2rem, 4vh, 3rem);
+  padding-block: clamp(2rem, 4vh, 3.5rem);
 }
-@media (min-width: 1000px) {
-  .hero__inner { grid-template-columns: 1.08fr .92fr; gap: 3.5rem; }
+@media (min-width: 900px) {
+  .hero__inner { grid-template-columns: 1.02fr .98fr; }
 }
 
 .hero__kicker {
@@ -540,70 +525,27 @@ section { position: relative; }
   color: var(--ink-soft);
 }
 
-/* floating hero card stack */
-.hero__cards {
+/* One dominant photograph instead of a stack of floating cards. */
+.hero__shot {
   position: relative;
-  height: clamp(330px, 78vw, 420px);
-  margin-top: .5rem;
-}
-@media (min-width: 1000px) {
-  .hero__cards { height: clamp(430px, 44vw, 580px); margin-top: 0; }
-}
-
-.float-card {
-  position: absolute;
+  margin: 0;
   border-radius: var(--r-lg);
   overflow: hidden;
-  box-shadow: var(--shadow-lg);
-  border: 5px solid rgba(255, 255, 255, .9);
-  transform-style: preserve-3d;
-  will-change: transform;
+  aspect-ratio: 4 / 5;
+  /* Stacked under the copy, an uncapped portrait crop makes the hero twice the
+     height of the screen, so cap it and let object-fit do the cropping. */
+  max-height: 56svh;
+  box-shadow: 0 44px 90px -44px rgba(53, 16, 26, .5);
 }
-.float-card img,
-.float-card video { width: 100%; height: 100%; object-fit: cover; }
-.float-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--grad-sheen);
-  opacity: .25;
-  pointer-events: none;
+.hero__shot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
-
-.float-card--a { width: 56%; aspect-ratio: 9/16; top: 0;    right: 6%;  z-index: 3; }
-.float-card--b { width: 42%; aspect-ratio: 3/4;  bottom: 2%; left: 0;   z-index: 4; }
-.float-card--c { width: 29%; aspect-ratio: 3/4;  top: 8%;    left: 1%;  z-index: 2; }
-
-/* Scoped with .hero so these win over the base rules that follow in this file;
-   a media query adds no specificity of its own. */
-@media (max-width: 700px) {
-  .hero .float-card--c, .hero .hero__badge { display: none; }
-  .hero .float-card--a { width: 60%; right: 0; }
-  .hero .float-card--b { width: 46%; }
+@media (min-width: 900px) {
+  .hero__shot { aspect-ratio: 5 / 6; max-height: 74vh; }
 }
-
-.hero__badge {
-  position: absolute;
-  z-index: 5;
-  left: 30%;
-  top: 38%;
-  width: 118px;
-  height: 118px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  text-align: center;
-  background: rgba(255, 251, 243, .9);
-  backdrop-filter: blur(14px);
-  box-shadow: var(--shadow-md);
-  border: 1px solid rgba(255, 255, 255, .9);
-  font-family: var(--font-display);
-  font-size: .82rem;
-  line-height: 1.25;
-  color: var(--plum-800);
-  padding: .8rem;
-}
-.hero__badge b { display: block; font-size: 1.5rem; color: var(--berry-500); }
 
 .scroll-cue {
   position: absolute;
@@ -681,75 +623,64 @@ section { position: relative; }
 .marquee:hover .marquee__track { animation-play-state: paused; }
 
 /* ===================== occasions ===================== */
-.occasions { background: linear-gradient(180deg, var(--cream-50), var(--pink-50) 70%, var(--cream-50)); }
+.occasions { background: var(--cream-50); }
 
 .occ-grid {
   display: grid;
-  gap: 1.35rem;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  perspective: 1400px;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+}
+@media (min-width: 880px) {
+  /* Two wide cards over three portrait ones, so the row reads as an editorial
+     spread rather than a set of identical tiles. */
+  .occ-grid { grid-template-columns: repeat(6, 1fr); }
+  .occ { grid-column: span 2; aspect-ratio: 3 / 4; }
+  .occ--wide { grid-column: span 3; aspect-ratio: 16 / 11; }
 }
 
+/* A category is sold by the cake in it, not by an icon of a cake. */
 .occ {
   position: relative;
-  padding: 2.1rem 1.7rem 1.9rem;
+  display: block;
   border-radius: var(--r-lg);
-  background: rgba(255, 255, 255, .72);
-  border: 1px solid rgba(255, 255, 255, .9);
-  backdrop-filter: blur(10px);
-  box-shadow: var(--shadow-sm);
   overflow: hidden;
-  transform-style: preserve-3d;
+  aspect-ratio: 4 / 5;
+  background: var(--pink-100);
+  box-shadow: var(--shadow-sm);
   transition: transform .5s var(--ease), box-shadow .5s var(--ease);
-  will-change: transform;
 }
-.occ::before {
+.occ img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .9s var(--ease);
+}
+.occ::after {
   content: "";
   position: absolute;
-  inset: 0 0 auto;
-  height: 3px;
-  background: var(--grad-gold);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform .6s var(--ease);
+  inset: 0;
+  background: linear-gradient(180deg, rgba(53, 16, 26, 0) 34%, rgba(53, 16, 26, .84) 100%);
 }
-.occ:hover { box-shadow: var(--shadow-lg); }
-.occ:hover::before { transform: scaleX(1); }
-
-.occ__ico {
-  width: 50px;
-  height: 50px;
-  display: grid;
-  place-items: center;
-  border-radius: 15px;
-  background: var(--pink-100);
-  color: var(--pink-600);
-  margin-bottom: 1.25rem;
-  transform: translateZ(28px);
-}
-.occ__ico svg { width: 24px; height: 24px; }
-
-.occ h3 {
-  font-size: 1.3rem;
-  margin-bottom: .55rem;
-  transform: translateZ(18px);
-}
-.occ p {
-  margin: 0;
-  font-size: .94rem;
-  color: var(--ink-soft);
-  transform: translateZ(10px);
-}
-.occ__n {
+.occ__body {
   position: absolute;
-  right: 1.1rem;
-  top: .7rem;
-  font-family: var(--font-display);
-  font-size: 3.4rem;
-  color: rgba(239, 170, 182, .28);
-  line-height: 1;
-  pointer-events: none;
+  inset: auto 0 0;
+  z-index: 1;
+  display: grid;
+  gap: .3rem;
+  padding: 1.5rem 1.2rem 1.15rem;
+  color: var(--cream-50);
 }
+.occ__body strong {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 1rem + .5vw, 1.38rem);
+  font-weight: 500;
+}
+.occ__body span { font-size: .85rem; color: rgba(253, 244, 228, .78); }
+
+.occ:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+.occ:hover img { transform: scale(1.06); }
+.occ:focus-visible { outline: 2px solid var(--berry-500); outline-offset: 3px; }
 
 /* ===================== gallery ===================== */
 .filters {
@@ -1726,5 +1657,4 @@ section { position: relative; }
   .reveal-word > span { transform: none; }
   .marquee__track { animation: none; }
   .wa-float { transform: none; }
-  #scene { display: none; }
 }
