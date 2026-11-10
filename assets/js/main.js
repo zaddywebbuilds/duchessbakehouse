@@ -175,7 +175,7 @@
         elSizes.appendChild(row);
       });
     }
-    if (elPrice && cfg.priceNote) elPrice.textContent = cfg.priceNote;
+    /* elPrice is set per-cake in show() so each design can carry its own price. */
     if (elLead && cfg.leadNote) elLead.textContent = cfg.leadNote;
 
     function visible() {
@@ -224,6 +224,14 @@
       if (elTag) elTag.textContent = d.tag;
       if (elTitle) elTitle.textContent = d.name;
       if (elSub) elSub.textContent = d.sub;
+      /* Overlay price / description set via the admin panel. */
+      var cat = window.DUCHESS_CATALOGUE && window.DUCHESS_CATALOGUE[d.slug];
+      if (elPrice) {
+        elPrice.textContent = (cat && cat.price) ? cat.price : (cfg.priceNote || "");
+      }
+      if (cat && cat.description && elSub) {
+        elSub.textContent = cat.description;
+      }
       if (elOrder) {
         elOrder.href = orderLink(d);
         elOrder.setAttribute("aria-label", "Order the " + d.name + " design on WhatsApp");

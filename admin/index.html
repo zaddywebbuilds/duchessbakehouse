@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Duchess Bakehouse — Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --berry: #7b1a30;
+    --berry-dark: #5c1223;
+    --cream: #fdf8f3;
+    --gold: #c9a84c;
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --border: #e0d9d0;
+    --danger: #c0392b;
+    --success: #2e7d55;
+    --radius: 10px;
+    --shadow: 0 2px 12px rgba(0,0,0,.08);
+  }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #f5f0eb; color: var(--text); min-height: 100vh; }
+
+  /* ── login ── */
+  .login-wrap { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 1.5rem; }
+  .login-card { background: #fff; border-radius: 16px; box-shadow: var(--shadow); padding: 2.5rem 2rem; width: 100%; max-width: 380px; text-align: center; }
+  .login-card .brand { font-size: 1.1rem; font-weight: 700; color: var(--berry); letter-spacing: .02em; margin-bottom: .25rem; }
+  .login-card .sub { font-size: .85rem; color: var(--muted); margin-bottom: 2rem; }
+  .login-card label { display: block; text-align: left; font-size: .8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .4rem; }
+  .login-card input[type=password] { width: 100%; padding: .75rem 1rem; border: 1.5px solid var(--border); border-radius: var(--radius); font-size: 1rem; outline: none; transition: border-color .15s; }
+  .login-card input[type=password]:focus { border-color: var(--berry); }
+  .login-err { font-size: .85rem; color: var(--danger); margin-top: .75rem; min-height: 1.2em; }
+
+  /* ── shared button ── */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: .4rem; padding: .65rem 1.4rem; border-radius: 8px; font-size: .9rem; font-weight: 600; border: none; cursor: pointer; transition: background .15s, opacity .15s; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .btn-primary { background: var(--berry); color: #fff; width: 100%; margin-top: 1.2rem; padding: .85rem; }
+  .btn-primary:hover:not(:disabled) { background: var(--berry-dark); }
+  .btn-ghost { background: transparent; color: var(--berry); border: 1.5px solid var(--berry); }
+  .btn-ghost:hover { background: var(--berry); color: #fff; }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-danger:hover:not(:disabled) { opacity: .85; }
+  .btn-sm { padding: .4rem .9rem; font-size: .8rem; border-radius: 6px; }
+
+  /* ── layout ── */
+  .app { display: none; flex-direction: column; min-height: 100vh; }
+  .app.is-visible { display: flex; }
+
+  .topbar { background: var(--berry); color: #fff; display: flex; align-items: center; justify-content: space-between; padding: .9rem 1.5rem; position: sticky; top: 0; z-index: 100; }
+  .topbar .brand-top { font-weight: 700; font-size: 1rem; letter-spacing: .02em; }
+  .topbar .brand-top small { font-weight: 400; opacity: .7; font-size: .78rem; display: block; }
+  .topbar-right { display: flex; gap: .75rem; align-items: center; }
+  .topbar-right .btn { padding: .4rem 1rem; font-size: .82rem; background: rgba(255,255,255,.15); color: #fff; }
+  .topbar-right .btn:hover { background: rgba(255,255,255,.25); }
+  .topbar-right .btn-add { background: var(--gold); color: #000; }
+  .topbar-right .btn-add:hover { background: #b8972e; }
+
+  .content { flex: 1; padding: 1.5rem; max-width: 1100px; margin: 0 auto; width: 100%; }
+
+  /* ── toast ── */
+  .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--text); color: #fff; padding: .75rem 1.25rem; border-radius: 10px; font-size: .88rem; opacity: 0; transform: translateY(8px); transition: all .25s; pointer-events: none; z-index: 9999; max-width: 320px; }
+  .toast.is-show { opacity: 1; transform: none; }
+  .toast.is-error { background: var(--danger); }
+
+  /* ── cake grid ── */
+  .grid-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: .5rem; }
+  .grid-head h1 { font-size: 1.3rem; font-weight: 700; }
+  .grid-head .count { font-size: .85rem; color: var(--muted); }
+  .filter-bar { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+  .filter-bar button { padding: .4rem .9rem; border-radius: 20px; border: 1.5px solid var(--border); background: #fff; font-size: .82rem; cursor: pointer; transition: all .15s; }
+  .filter-bar button.active { background: var(--berry); color: #fff; border-color: var(--berry); }
+
+  .cake-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+  .cake-card { background: #fff; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); transition: transform .15s, box-shadow .15s; cursor: pointer; }
+  .cake-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.12); }
+  .cake-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
+  .cake-card .card-body { padding: .75rem; }
+  .cake-card .card-name { font-weight: 700; font-size: .9rem; }
+  .cake-card .card-cat { font-size: .75rem; color: var(--muted); text-transform: capitalize; margin-top: .15rem; }
+  .cake-card .card-price { font-size: .8rem; color: var(--success); font-weight: 600; margin-top: .3rem; }
+  .cake-card .card-actions { padding: .5rem .75rem .75rem; display: flex; gap: .5rem; }
+
+  /* ── modal ── */
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: none; z-index: 500; align-items: center; justify-content: center; padding: 1rem; }
+  .overlay.is-open { display: flex; }
+  .modal { background: #fff; border-radius: 16px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.2); }
+  .modal-head { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: #fff; z-index: 1; }
+  .modal-head h2 { font-size: 1.1rem; }
+  .modal-close { background: none; border: none; font-size: 1.4rem; cursor: pointer; line-height: 1; color: var(--muted); padding: .2rem; }
+  .modal-body { padding: 1.5rem; }
+  .modal-foot { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; gap: .75rem; justify-content: flex-end; flex-wrap: wrap; }
+
+  /* ── form ── */
+  .field { margin-bottom: 1.1rem; }
+  .field label { display: block; font-size: .8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .4rem; }
+  .field input, .field select, .field textarea { width: 100%; padding: .65rem .9rem; border: 1.5px solid var(--border); border-radius: 8px; font-size: .95rem; font-family: inherit; outline: none; transition: border-color .15s; }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--berry); }
+  .field textarea { resize: vertical; min-height: 90px; }
+  .field .hint { font-size: .77rem; color: var(--muted); margin-top: .3rem; }
+
+  /* image preview */
+  .img-preview { width: 100%; aspect-ratio: 3/4; border-radius: 8px; object-fit: cover; display: block; border: 2px dashed var(--border); background: var(--cream); margin-bottom: .75rem; }
+  .img-preview.has-img { border-style: solid; }
+  .img-upload-label { display: flex; align-items: center; justify-content: center; gap: .5rem; padding: .65rem 1rem; border: 1.5px dashed var(--border); border-radius: 8px; cursor: pointer; font-size: .88rem; color: var(--muted); transition: border-color .15s, color .15s; }
+  .img-upload-label:hover { border-color: var(--berry); color: var(--berry); }
+  #fileInput { display: none; }
+
+  /* spinner */
+  .spin { display: inline-block; width: 1em; height: 1em; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin .6s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* empty state */
+  .empty { text-align: center; padding: 3rem 1rem; color: var(--muted); }
+
+  @media (max-width: 480px) {
+    .cake-grid { grid-template-columns: repeat(2, 1fr); }
+    .topbar-right .btn-logout { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══════════════════════════════════════════════════════════ -->
+<div class="login-wrap" id="loginView">
+  <div class="login-card">
+    <p class="brand">Duchess Bakehouse</p>
+    <p class="sub">Admin panel</p>
+    <label for="pwd">Password</label>
+    <input type="password" id="pwd" autocomplete="current-password" placeholder="Enter password">
+    <p class="login-err" id="loginErr" aria-live="polite"></p>
+    <button class="btn btn-primary" id="loginBtn">Sign in</button>
+  </div>
+</div>
+
+<!-- ══ APP ════════════════════════════════════════════════════════════ -->
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="brand-top">Duchess Bakehouse <small>Admin panel</small></div>
+    <div class="topbar-right">
+      <button class="btn btn-add" id="addBtn">+ Add cake</button>
+      <button class="btn btn-logout" id="logoutBtn">Sign out</button>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="grid-head">
+      <h1>Cake catalogue</h1>
+      <span class="count" id="cakeCount"></span>
+    </div>
+    <div class="filter-bar" id="filterBar"></div>
+    <div class="cake-grid" id="cakeGrid"></div>
+  </main>
+</div>
+
+<!-- ══ EDIT/ADD MODAL ════════════════════════════════════════════════ -->
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalTitle">Edit cake</h2>
+      <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:140px 1fr;gap:1rem;align-items:start">
+        <div>
+          <img class="img-preview" id="imgPreview" src="" alt="Cake preview">
+          <label class="img-upload-label" for="fileInput">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Change image
+          </label>
+          <input type="file" id="fileInput" accept="image/webp,image/jpeg">
+          <p id="imgStatus" style="font-size:.75rem;color:var(--muted);margin-top:.3rem;text-align:center"></p>
+        </div>
+        <div>
+          <div class="field">
+            <label for="fName">Cake name</label>
+            <input type="text" id="fName" placeholder="e.g. Blush Ruffle" maxlength="120">
+          </div>
+          <div class="field">
+            <label for="fSub">Short tagline</label>
+            <input type="text" id="fSub" placeholder="e.g. Pearls &amp; gold topper" maxlength="160">
+          </div>
+          <div class="field">
+            <label for="fCat">Category</label>
+            <select id="fCat">
+              <option value="birthday">Birthday</option>
+              <option value="kids">Kids</option>
+              <option value="wedding">Wedding</option>
+              <option value="anniversary">Anniversary</option>
+              <option value="celebration">Celebration</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="fPrice">Price (optional)</label>
+            <input type="text" id="fPrice" placeholder="e.g. ₦45,000" maxlength="80">
+            <p class="hint">Leave blank to show the standard "prices on request" note.</p>
+          </div>
+        </div>
+      </div>
+      <div class="field" style="margin-top:.5rem">
+        <label for="fDesc">Description (optional)</label>
+        <textarea id="fDesc" placeholder="A short note shown when someone opens the design — style, finish, any details worth highlighting." maxlength="500"></textarea>
+      </div>
+      <div class="field">
+        <label for="fAlt">Image alt text</label>
+        <input type="text" id="fAlt" placeholder="Describe the cake for screen readers and search engines" maxlength="300">
+      </div>
+      <div style="display:flex;gap:.75rem;align-items:center;margin-top:.25rem">
+        <label style="display:flex;align-items:center;gap:.4rem;font-size:.88rem;cursor:pointer">
+          <input type="checkbox" id="fFeatured"> Show in Featured section
+        </label>
+        <label style="display:flex;align-items:center;gap:.4rem;font-size:.88rem;cursor:pointer">
+          <input type="checkbox" id="fTall"> Tall card layout
+        </label>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-danger btn-sm" id="deleteBtn" style="margin-right:auto">Delete cake</button>
+      <button class="btn btn-ghost" id="cancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="saveBtn" style="width:auto">Save changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOAST ══════════════════════════════════════════════════════════ -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ── state ── */
+  var cakes = [];
+  var editingSlug = null; /* null = new cake */
+  var pendingUpload = null; /* { filename, dataUrl } */
+  var activeCat = "all";
+
+  /* ── dom refs ── */
+  var loginView = id("loginView");
+  var app       = id("app");
+  var loginErr  = id("loginErr");
+  var loginBtn  = id("loginBtn");
+  var logoutBtn = id("logoutBtn");
+  var addBtn    = id("addBtn");
+  var cakeGrid  = id("cakeGrid");
+  var cakeCount = id("cakeCount");
+  var filterBar = id("filterBar");
+  var overlay   = id("overlay");
+  var modalTitle = id("modalTitle");
+  var modalClose = id("modalClose");
+  var cancelBtn  = id("cancelBtn");
+  var saveBtn    = id("saveBtn");
+  var deleteBtn  = id("deleteBtn");
+  var imgPreview = id("imgPreview");
+  var fileInput  = id("fileInput");
+  var imgStatus  = id("imgStatus");
+  var toast      = id("toast");
+  var toastTimer = null;
+
+  function id(x) { return document.getElementById(x); }
+  function esc(s) { var d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+  function slug(s) { return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+
+  /* ── login ── */
+  id("pwd").addEventListener("keydown", function (e) { if (e.key === "Enter") doLogin(); });
+  loginBtn.addEventListener("click", doLogin);
+
+  function doLogin() {
+    var pw = id("pwd").value.trim();
+    if (!pw) { loginErr.textContent = "Please enter your password."; return; }
+    loginBtn.disabled = true;
+    loginBtn.innerHTML = '<span class="spin"></span> Signing in…';
+    fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: pw }),
+      credentials: "same-origin"
+    })
+    .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+    .then(function (res) {
+      if (res.ok) {
+        loginErr.textContent = "";
+        showApp();
+      } else {
+        loginErr.textContent = res.d.error || "Incorrect password.";
+        loginBtn.disabled = false;
+        loginBtn.textContent = "Sign in";
+      }
+    })
+    .catch(function () {
+      loginErr.textContent = "Could not connect. Try again.";
+      loginBtn.disabled = false;
+      loginBtn.textContent = "Sign in";
+    });
+  }
+
+  logoutBtn.addEventListener("click", function () {
+    fetch("/api/logout", { method: "POST", credentials: "same-origin" })
+      .finally(function () { location.reload(); });
+  });
+
+  /* ── boot — try loading catalogue (shows app if already logged in) ── */
+  loadCatalogue().then(showApp).catch(function () { /* not logged in */ });
+
+  function showApp() {
+    loginView.style.display = "none";
+    app.classList.add("is-visible");
+    if (!cakes.length) loadCatalogue().then(renderGrid);
+    else renderGrid();
+  }
+
+  /* ── data ── */
+  function loadCatalogue() {
+    return fetch("/api/catalogue", { credentials: "same-origin" })
+      .then(function (r) {
+        if (!r.ok) throw new Error("not ok");
+        return r.json();
+      })
+      .then(function (data) {
+        cakes = (data && data.cakes) || [];
+      });
+  }
+
+  function saveCatalogue() {
+    return fetch("/api/catalogue", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin",
+      body: JSON.stringify({ cakes: cakes })
+    }).then(function (r) {
+      if (!r.ok) return r.json().then(function (d) { throw new Error(d.error || "Save failed"); });
+      return r.json();
+    });
+  }
+
+  /* ── grid ── */
+  var CATS = ["all","birthday","kids","wedding","anniversary","celebration"];
+
+  function renderFilterBar() {
+    filterBar.innerHTML = "";
+    CATS.forEach(function (c) {
+      var btn = document.createElement("button");
+      btn.textContent = c === "all" ? "All" : c.charAt(0).toUpperCase() + c.slice(1);
+      if (c === activeCat) btn.classList.add("active");
+      btn.addEventListener("click", function () { activeCat = c; renderGrid(); });
+      filterBar.appendChild(btn);
+    });
+  }
+
+  function renderGrid() {
+    renderFilterBar();
+    var filtered = activeCat === "all" ? cakes : cakes.filter(function (c) { return c.category === activeCat; });
+    cakeCount.textContent = filtered.length + " cake" + (filtered.length !== 1 ? "s" : "");
+    cakeGrid.innerHTML = "";
+    if (!filtered.length) {
+      cakeGrid.innerHTML = '<p class="empty">No cakes in this category.</p>';
+      return;
+    }
+    filtered.forEach(function (c) {
+      var card = document.createElement("div");
+      card.className = "cake-card";
+      card.innerHTML =
+        '<img src="../assets/img/' + esc(c.img) + '" alt="' + esc(c.alt || c.name) + '" loading="lazy">' +
+        '<div class="card-body">' +
+          '<p class="card-name">' + esc(c.name) + '</p>' +
+          '<p class="card-cat">' + esc(c.category) + '</p>' +
+          (c.price ? '<p class="card-price">' + esc(c.price) + '</p>' : '') +
+        '</div>' +
+        '<div class="card-actions">' +
+          '<button class="btn btn-ghost btn-sm edit-btn" data-slug="' + esc(c.slug) + '">Edit</button>' +
+        '</div>';
+      cakeGrid.appendChild(card);
+    });
+    cakeGrid.querySelectorAll(".edit-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () { openEdit(btn.dataset.slug); });
+    });
+  }
+
+  /* ── modal helpers ── */
+  function openEdit(slugVal) {
+    var cake = cakes.find(function (c) { return c.slug === slugVal; });
+    if (!cake) return;
+    editingSlug = slugVal;
+    pendingUpload = null;
+    modalTitle.textContent = "Edit cake";
+    deleteBtn.style.display = "";
+    id("fName").value = cake.name || "";
+    id("fSub").value = cake.sub || "";
+    id("fCat").value = cake.category || "birthday";
+    id("fPrice").value = cake.price || "";
+    id("fDesc").value = cake.description || "";
+    id("fAlt").value = cake.alt || "";
+    id("fFeatured").checked = !!cake.featured;
+    id("fTall").checked = !!cake.tall;
+    imgPreview.src = "../assets/img/" + (cake.img || "");
+    imgPreview.classList.toggle("has-img", !!cake.img);
+    imgStatus.textContent = "";
+    overlay.classList.add("is-open");
+    id("fName").focus();
+  }
+
+  function openAdd() {
+    editingSlug = null;
+    pendingUpload = null;
+    modalTitle.textContent = "Add new cake";
+    deleteBtn.style.display = "none";
+    id("fName").value = "";
+    id("fSub").value = "";
+    id("fCat").value = "birthday";
+    id("fPrice").value = "";
+    id("fDesc").value = "";
+    id("fAlt").value = "";
+    id("fFeatured").checked = false;
+    id("fTall").checked = false;
+    imgPreview.src = "";
+    imgPreview.classList.remove("has-img");
+    imgStatus.textContent = "";
+    overlay.classList.add("is-open");
+    id("fName").focus();
+  }
+
+  function closeModal() {
+    overlay.classList.remove("is-open");
+    editingSlug = null;
+    pendingUpload = null;
+  }
+
+  addBtn.addEventListener("click", openAdd);
+  modalClose.addEventListener("click", closeModal);
+  cancelBtn.addEventListener("click", closeModal);
+  overlay.addEventListener("click", function (e) { if (e.target === overlay) closeModal(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && overlay.classList.contains("is-open")) closeModal(); });
+
+  /* ── image upload ── */
+  fileInput.addEventListener("change", function () {
+    var file = fileInput.files[0];
+    if (!file) return;
+    if (file.size > 3 * 1024 * 1024) { showToast("Image must be under 3 MB", true); return; }
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      imgPreview.src = e.target.result;
+      imgPreview.classList.add("has-img");
+      /* Generate filename from cake name or fallback to timestamp. */
+      var nameVal = id("fName").value.trim();
+      var base = nameVal ? slug(nameVal) : "cake-" + Date.now();
+      var ext = file.type === "image/webp" ? ".webp" : ".jpg";
+      pendingUpload = { filename: base + ext, dataUrl: e.target.result };
+      imgStatus.textContent = "Ready to upload: " + pendingUpload.filename;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  /* ── save ── */
+  saveBtn.addEventListener("click", doSave);
+
+  function doSave() {
+    var nameVal = id("fName").value.trim();
+    if (!nameVal) { showToast("Please enter a cake name.", true); id("fName").focus(); return; }
+
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<span class="spin"></span> Saving…';
+
+    var promise = Promise.resolve(null);
+
+    /* Upload image first if one was chosen. */
+    if (pendingUpload) {
+      imgStatus.textContent = "Uploading image…";
+      promise = fetch("/api/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify(pendingUpload)
+      }).then(function (r) {
+        return r.json().then(function (d) { return { ok: r.ok, d: d }; });
+      }).then(function (res) {
+        if (!res.ok) throw new Error(res.d.error || "Upload failed");
+        imgStatus.textContent = "Uploaded.";
+        return res.d; /* { img, imgFallback } */
+      });
+    }
+
+    promise.then(function (uploadResult) {
+      var cakeSlug = editingSlug || slug(nameVal);
+      var existingCake = cakes.find(function (c) { return c.slug === cakeSlug; });
+      var newCake = {
+        slug: cakeSlug,
+        name: nameVal,
+        category: id("fCat").value,
+        sub: id("fSub").value.trim(),
+        alt: id("fAlt").value.trim(),
+        img: (uploadResult && uploadResult.img) || (existingCake && existingCake.img) || "",
+        imgFallback: (uploadResult && uploadResult.imgFallback) || (existingCake && existingCake.imgFallback) || "",
+        featured: id("fFeatured").checked,
+        tall: id("fTall").checked,
+        price: id("fPrice").value.trim(),
+        description: id("fDesc").value.trim()
+      };
+
+      if (editingSlug) {
+        var idx = cakes.findIndex(function (c) { return c.slug === editingSlug; });
+        if (idx > -1) cakes[idx] = newCake; else cakes.push(newCake);
+      } else {
+        if (cakes.some(function (c) { return c.slug === cakeSlug; })) {
+          showToast("A cake with that slug already exists.", true);
+          saveBtn.disabled = false;
+          saveBtn.textContent = "Save changes";
+          return;
+        }
+        cakes.push(newCake);
+      }
+
+      return saveCatalogue().then(function () {
+        closeModal();
+        renderGrid();
+        showToast(editingSlug ? "Saved — site will rebuild in ~1 min." : "Cake added — site will rebuild in ~1 min.");
+      });
+    }).catch(function (e) {
+      showToast(e.message || "Something went wrong.", true);
+    }).finally(function () {
+      saveBtn.disabled = false;
+      saveBtn.textContent = "Save changes";
+    });
+  }
+
+  /* ── delete ── */
+  deleteBtn.addEventListener("click", function () {
+    if (!editingSlug) return;
+    var cake = cakes.find(function (c) { return c.slug === editingSlug; });
+    if (!cake) return;
+    if (!confirm("Delete "" + cake.name + ""? This cannot be undone.")) return;
+    cakes = cakes.filter(function (c) { return c.slug !== editingSlug; });
+    deleteBtn.disabled = true;
+    saveCatalogue().then(function () {
+      closeModal();
+      renderGrid();
+      showToast("Deleted — site will rebuild in ~1 min.");
+    }).catch(function (e) {
+      showToast(e.message || "Delete failed.", true);
+      deleteBtn.disabled = false;
+    });
+  });
+
+  /* ── toast ── */
+  function showToast(msg, isError) {
+    clearTimeout(toastTimer);
+    toast.textContent = msg;
+    toast.classList.toggle("is-error", !!isError);
+    toast.classList.add("is-show");
+    toastTimer = setTimeout(function () { toast.classList.remove("is-show"); }, 4000);
+  }
+})();
+</script>
+</body>
+</html>

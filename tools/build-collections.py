@@ -1,8 +1,7 @@
-"""Generate the crawlable cake collection pages from index.html.
+"""Generate the crawlable cake collection pages from assets/data/catalogue.json.
 
-The homepage gallery stays the single source of truth: this reads the cake
-figures straight out of it, so a page can never list a cake the site does not
-have. Re-run after adding or recategorising a cake:
+catalogue.json is the single source of truth for all cake data, including cakes
+added through the admin panel. Re-run after editing it:
 
     python tools/build-collections.py
 
@@ -10,7 +9,7 @@ Writes cakes/index.html and cakes/<category>/index.html.
 """
 
 import os
-import re
+import json
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -36,29 +35,40 @@ CATEGORIES = [
 ]
 
 
-def read_index():
-    with open(os.path.join(ROOT, "index.html"), encoding="utf-8") as fh:
-        return fh.read()
+def read_catalogue():
+    path = os.path.join(ROOT, "assets", "data", "catalogue.json")
+    with open(path, encoding="utf-8") as fh:
+        return json.load(fh)["cakes"]
 
 
-def figures(html):
-    """Every gallery figure, paired with its category."""
-    start = html.index('<div class="gallery" id="gallery">')
-    end = html.index("</div>", html.rindex("</figure>", start))
-    block = html[start:end]
-    out = []
-    for m in re.finditer(r'<figure [^>]*data-cat="([a-z]+)"[^>]*>.*?</figure>', block, re.S):
-        out.append((m.group(1), m.group(0)))
-    return out
+def figure_html(cake, prefix):
+    slug = cake["slug"]
+    name = cake["name"]
+    sub = cake.get("sub", "")
+    alt = cake.get("alt", name)
+    img = cake.get("img", "")
+    img_fallback = cake.get("imgFallback", img.replace(".webp", ".jpg"))
+    cat = cake["category"]
+    cat_label = cat.capitalize()
+    tall_class = " cake--tall" if cake.get("tall") else ""
+
+    sub_span = f"<span>{sub}</span>" if sub else ""
+    fallback_srcset = f' srcset="{prefix}assets/img/{img_fallback} 1x"' if img_fallback else ""
+
+    return (
+        f'<figure data-slug="{slug}" class="cake{tall_class} r-up" '
+        f'data-cat="{cat}" data-tilt tabindex="0">\n'
+        f'        <img src="{prefix}assets/img/{img}" alt="{alt}" '
+        f'width="700" height="933" loading="lazy" decoding="async">\n'
+        f'        <span class="cake__tag">{cat_label}</span>\n'
+        f'        <figcaption><strong>{name}</strong>{sub_span}</figcaption>\n'
+        f'      </figure>'
+    )
 
 
-def page(prefix, slug, title, intro, figs, canonical):
-    # Figures are lifted verbatim from the homepage, where asset paths are
-    # relative to the root. From cakes/<category>/ they need the prefix or
-    # every image 404s.
+def page(prefix, slug, title, intro, cakes, canonical):
     cards = "\n".join(
-        "      " + f.replace('src="assets/', 'src="%sassets/' % prefix)
-        for _, f in figs
+        "      " + figure_html(c, prefix) for c in cakes
     )
     nav_home = prefix + "index.html"
     return f"""<!doctype html>
@@ -186,10 +196,9 @@ def write(path, text):
 
 
 def main():
-    html = read_index()
-    figs = figures(html)
-    if not figs:
-        sys.exit("no gallery figures found in index.html")
+    cakes = read_catalogue()
+    if not cakes:
+        sys.exit("no cakes found in assets/data/catalogue.json")
 
     written = []
 
@@ -197,11 +206,11 @@ def main():
         "../", "all", "Every cake we have baked",
         "The full Duchess Bakehouse portfolio: birthdays, kids' parties, weddings, "
         "anniversaries, send-forth and thanksgiving, all baked to order in Lagos.",
-        figs, SITE + "/cakes/")))
-    print("  cakes/index.html  (%d cakes)" % len(figs))
+        cakes, SITE + "/cakes/")))
+    print("  cakes/index.html  (%d cakes)" % len(cakes))
 
     for slug, title, intro in CATEGORIES:
-        sub = [f for f in figs if f[0] == slug]
+        sub = [c for c in cakes if c["category"] == slug]
         if not sub:
             print("  skipped %s (no cakes)" % slug)
             continue
