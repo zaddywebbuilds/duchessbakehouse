@@ -32,6 +32,13 @@
   .login-card input[type=password] { width: 100%; padding: .75rem 1rem; border: 1.5px solid var(--border); border-radius: var(--radius); font-size: 1rem; outline: none; transition: border-color .15s; }
   .login-card input[type=password]:focus { border-color: var(--berry); }
   .login-err { font-size: .85rem; color: var(--danger); margin-top: .75rem; min-height: 1.2em; }
+  .login-ok  { font-size: .85rem; color: var(--success); margin-top: .75rem; }
+  .forgot-link { display: block; margin-top: .9rem; font-size: .82rem; color: var(--muted); text-decoration: underline; cursor: pointer; background: none; border: none; width: 100%; }
+  .forgot-link:hover { color: var(--berry); }
+  .forgot-view { display: none; }
+  .forgot-view.is-active { display: block; }
+  .login-view { display: block; }
+  .login-view.is-hidden { display: none; }
 
   /* ── shared button ── */
   .btn { display: inline-flex; align-items: center; justify-content: center; gap: .4rem; padding: .65rem 1.4rem; border-radius: 8px; font-size: .9rem; font-weight: 600; border: none; cursor: pointer; transition: background .15s, opacity .15s; }
@@ -127,10 +134,34 @@
   <div class="login-card">
     <p class="brand">Duchess Bakehouse</p>
     <p class="sub">Admin panel</p>
-    <label for="pwd">Password</label>
-    <input type="password" id="pwd" autocomplete="current-password" placeholder="Enter password">
-    <p class="login-err" id="loginErr" aria-live="polite"></p>
-    <button class="btn btn-primary" id="loginBtn">Sign in</button>
+
+    <!-- password form -->
+    <div class="login-view" id="loginForm">
+      <label for="pwd">Password</label>
+      <input type="password" id="pwd" autocomplete="current-password" placeholder="Enter password">
+      <p class="login-err" id="loginErr" aria-live="polite"></p>
+      <button class="btn btn-primary" id="loginBtn">Sign in</button>
+      <button type="button" class="forgot-link" id="forgotLink">Forgot password?</button>
+    </div>
+
+    <!-- forgot password form -->
+    <div class="forgot-view" id="forgotForm">
+      <p style="font-size:.88rem;color:var(--muted);margin-bottom:1.2rem">Enter your admin email and we'll send a one-time login link.</p>
+      <label for="forgotEmail">Email</label>
+      <input type="email" id="forgotEmail" placeholder="your@email.com" autocomplete="email"
+             style="width:100%;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius);font-size:1rem;outline:none;margin-bottom:.5rem">
+      <p class="login-err" id="forgotErr" aria-live="polite"></p>
+      <p class="login-ok" id="forgotOk" aria-live="polite"></p>
+      <button class="btn btn-primary" id="forgotBtn">Send login link</button>
+      <button type="button" class="forgot-link" id="backToLogin">Back to sign in</button>
+    </div>
+
+    <!-- expired link message -->
+    <div class="forgot-view" id="expiredMsg">
+      <p style="font-size:.95rem;color:var(--danger);margin-bottom:1rem">That login link has expired or is invalid.</p>
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:1.5rem">Request a new one below.</p>
+      <button class="btn btn-primary" id="expiredForgotBtn">Send new login link</button>
+    </div>
   </div>
 </div>
 
@@ -300,8 +331,63 @@
       .finally(function () { location.reload(); });
   });
 
-  /* ── boot — try loading catalogue (shows app if already logged in) ── */
-  loadCatalogue().then(showApp).catch(function () { /* not logged in */ });
+  /* ── forgot password ── */
+  id("forgotLink").addEventListener("click", function () {
+    id("loginForm").classList.add("is-hidden");
+    id("forgotForm").classList.add("is-active");
+    id("forgotEmail").focus();
+  });
+  id("backToLogin").addEventListener("click", function () {
+    id("forgotForm").classList.remove("is-active");
+    id("loginForm").classList.remove("is-hidden");
+  });
+  id("expiredForgotBtn").addEventListener("click", function () {
+    id("expiredMsg").classList.remove("is-active");
+    id("loginForm").classList.remove("is-hidden");
+    id("forgotLink").click();
+  });
+
+  id("forgotEmail").addEventListener("keydown", function (e) { if (e.key === "Enter") doForgot(); });
+  id("forgotBtn").addEventListener("click", doForgot);
+
+  function doForgot() {
+    var email = id("forgotEmail").value.trim();
+    id("forgotErr").textContent = "";
+    id("forgotOk").textContent = "";
+    if (!email) { id("forgotErr").textContent = "Please enter your email address."; return; }
+    id("forgotBtn").disabled = true;
+    id("forgotBtn").innerHTML = '<span class="spin"></span> Sending…';
+    fetch("/api/forgot", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email }),
+      credentials: "same-origin"
+    })
+    .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+    .then(function (res) {
+      /* Always show success message — never reveal whether the email exists. */
+      id("forgotOk").textContent = "If that email matches our records, a login link is on its way. Check your inbox.";
+      id("forgotBtn").textContent = "Sent";
+    })
+    .catch(function () {
+      id("forgotErr").textContent = "Could not send. Try again shortly.";
+      id("forgotBtn").disabled = false;
+      id("forgotBtn").textContent = "Send login link";
+    });
+  }
+
+  /* ── boot ── */
+  /* Check /api/me first — prevents auto-login after sign-out because the
+     public GET /api/catalogue always succeeds regardless of auth state. */
+  var params = new URLSearchParams(window.location.search);
+  if (params.get("error") === "link_expired") {
+    id("loginForm").classList.add("is-hidden");
+    id("expiredMsg").classList.add("is-active");
+  }
+  fetch("/api/me", { credentials: "same-origin" })
+    .then(function (r) { if (!r.ok) throw new Error("not logged in"); return r.json(); })
+    .then(function () { loadCatalogue().then(showApp); })
+    .catch(function () { /* session invalid — stay on login */ });
 
   function showApp() {
     loginView.style.display = "none";
