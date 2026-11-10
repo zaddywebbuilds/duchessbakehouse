@@ -528,7 +528,7 @@
     if (!editingSlug) return;
     var cake = cakes.find(function (c) { return c.slug === editingSlug; });
     if (!cake) return;
-    if (!confirm("Delete "" + cake.name + ""? This cannot be undone.")) return;
+    if (!confirm('Delete "' + cake.name + '"? This cannot be undone.')) return;
     cakes = cakes.filter(function (c) { return c.slug !== editingSlug; });
     deleteBtn.disabled = true;
     saveCatalogue().then(function () {
