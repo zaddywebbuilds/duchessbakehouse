@@ -25,6 +25,7 @@ assets/js/analytics.js   optional tracking, off by default
 assets/js/main.js        nav, drawer, reveals, gallery filter, product dialog
 assets/js/concierge.js   the six-step cake brief
 assets/js/chops.js       the small chops tray builder
+assets/js/shortlist.js   save several designs, send them in one message
 assets/img/              cake-01..41 as webp + jpg pairs
 robots.txt, sitemap.xml
 ```

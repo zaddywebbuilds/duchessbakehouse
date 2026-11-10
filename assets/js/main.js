@@ -229,6 +229,11 @@
         elOrder.setAttribute("aria-label", "Order the " + d.name + " design on WhatsApp");
       }
       setParam("cake", d.slug);
+
+      /* The shortlist is a separate module and needs to know which design is
+         on screen so its save control can reflect that cake. */
+      box.dataset.slug = d.slug;
+      document.dispatchEvent(new CustomEvent("duchess:cakeshown", { detail: d }));
     }
 
     var FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -342,6 +347,17 @@
       else if (e.key === "ArrowLeft") show(idx - 1);
       else if (e.key === "ArrowRight") show(idx + 1);
       else if (e.key === "Tab") trapTab(e);
+    });
+
+    /* The one hook the shortlist module needs to open a saved design. */
+    document.addEventListener("duchess:opencake", function (e) {
+      var slug = e.detail && e.detail.slug;
+      if (!slug) return;
+      applyFilter("all", false);
+      var list = visible();
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].dataset.slug === slug) { open(i); return; }
+      }
     });
 
     /* ?filter= and ?cake= make a filtered view or a single design linkable. */

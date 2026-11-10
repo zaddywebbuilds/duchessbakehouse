@@ -105,7 +105,7 @@ def page(prefix, slug, title, intro, figs, canonical):
 </header>
 
 <main id="main">
-<section class="section">
+<section class="section section--page">
   <div class="shell">
     <nav class="crumbs" aria-label="Breadcrumb">
       <a href="{nav_home}">Home</a> <span aria-hidden="true">/</span>
@@ -171,6 +171,7 @@ def page(prefix, slug, title, intro, figs, canonical):
 <script src="{prefix}assets/js/catalogue.js" defer></script>
 <script src="{prefix}assets/js/analytics.js" defer></script>
 <script src="{prefix}assets/js/main.js" defer></script>
+<script src="{prefix}assets/js/shortlist.js" defer></script>
 </body>
 </html>
 """
