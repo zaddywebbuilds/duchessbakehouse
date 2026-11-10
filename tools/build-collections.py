@@ -13,7 +13,7 @@ import json
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SITE = "https://zaddywebbuilds.github.io/duchessbakehouse"
+SITE = "https://duchessbakehouse.vercel.app"
 
 CATEGORIES = [
     ("birthday", "Birthday cakes in Lagos",

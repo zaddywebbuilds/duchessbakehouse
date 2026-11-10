@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://zaddywebbuilds.github.io/duchessbakehouse/sitemap.xml
+Sitemap: https://duchessbakehouse.vercel.app/sitemap.xml
