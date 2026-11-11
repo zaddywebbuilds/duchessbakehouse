@@ -140,19 +140,33 @@ export default async function handler(req, res) {
       }
 
       /* Sanitise — only keep known fields. */
-      parsed.cakes = parsed.cakes.map((c) => ({
-        slug: String(c.slug || "").replace(/[^a-z0-9-]/g, "").slice(0, 80),
-        name: String(c.name || "").slice(0, 120),
-        category: String(c.category || "").slice(0, 40),
-        sub: String(c.sub || "").slice(0, 160),
-        alt: String(c.alt || "").slice(0, 300),
-        img: String(c.img || "").replace(/[^a-zA-Z0-9._-]/g, "").slice(0, 80),
-        imgFallback: String(c.imgFallback || "").replace(/[^a-zA-Z0-9._-]/g, "").slice(0, 80),
-        featured: Boolean(c.featured),
-        tall: Boolean(c.tall),
-        price: String(c.price || "").slice(0, 80),
-        description: String(c.description || "").slice(0, 500),
-      }));
+      const safeFilename = (s) => String(s || "").replace(/[^a-zA-Z0-9._-]/g, "").slice(0, 80);
+      const safeUrl = (s) => { const u = String(s || "").slice(0, 500); return /^https?:\/\//.test(u) ? u : ""; };
+      parsed.cakes = parsed.cakes.map((c) => {
+        const cake = {
+          slug: String(c.slug || "").replace(/[^a-z0-9-]/g, "").slice(0, 80),
+          name: String(c.name || "").slice(0, 120),
+          category: String(c.category || "").slice(0, 40),
+          sub: String(c.sub || "").slice(0, 160),
+          alt: String(c.alt || "").slice(0, 300),
+          img: safeFilename(c.img),
+          imgFallback: safeFilename(c.imgFallback),
+          featured: Boolean(c.featured),
+          tall: Boolean(c.tall),
+          price: String(c.price || "").slice(0, 80),
+          description: String(c.description || "").slice(0, 500),
+        };
+        if (Array.isArray(c.images) && c.images.length) {
+          cake.images = c.images.slice(0, 9).map((im) => ({
+            img: safeFilename(im.img),
+            imgFallback: safeFilename(im.imgFallback),
+          })).filter((im) => im.img);
+        }
+        if (Array.isArray(c.videos) && c.videos.length) {
+          cake.videos = c.videos.slice(0, 3).map(safeUrl).filter(Boolean);
+        }
+        return cake;
+      });
 
       try {
         const existing = await getFile(owner, repo, token);

@@ -107,12 +107,17 @@
   .field textarea { resize: vertical; min-height: 90px; }
   .field .hint { font-size: .77rem; color: var(--muted); margin-top: .3rem; }
 
-  /* image preview */
-  .img-preview { width: 100%; aspect-ratio: 3/4; border-radius: 8px; object-fit: cover; display: block; border: 2px dashed var(--border); background: var(--cream); margin-bottom: .75rem; }
-  .img-preview.has-img { border-style: solid; }
-  .img-upload-label { display: flex; align-items: center; justify-content: center; gap: .5rem; padding: .65rem 1rem; border: 1.5px dashed var(--border); border-radius: 8px; cursor: pointer; font-size: .88rem; color: var(--muted); transition: border-color .15s, color .15s; }
-  .img-upload-label:hover { border-color: var(--berry); color: var(--berry); }
-  #fileInput { display: none; }
+  /* multi-image slots */
+  .img-slot-wrap { display: flex; flex-wrap: wrap; gap: .6rem; }
+  .img-slot { display: flex; flex-direction: column; align-items: center; gap: .4rem; }
+  .img-slot img { width: 90px; height: 120px; object-fit: cover; border-radius: 6px; border: 2px dashed var(--border); background: var(--cream); display: block; }
+  .img-slot img.has-img { border-style: solid; }
+  .img-slot-label { width: 90px; font-size: .72rem; display: flex; align-items: center; justify-content: center; gap: .3rem; padding: .4rem .5rem; border: 1.5px dashed var(--border); border-radius: 6px; cursor: pointer; color: var(--muted); text-align: center; line-height: 1.3; transition: border-color .15s, color .15s; }
+  .img-slot-label:hover { border-color: var(--berry); color: var(--berry); }
+  .img-slot-label input[type=file] { display: none; }
+  .img-slot-rm { font-size: .7rem; color: var(--danger); background: none; border: none; cursor: pointer; padding: 0; }
+  .img-add-slot { width: 90px; height: 170px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px dashed var(--border); border-radius: 8px; cursor: pointer; color: var(--muted); font-size: .78rem; gap: .4rem; background: none; transition: border-color .15s, color .15s; }
+  .img-add-slot:hover { border-color: var(--berry); color: var(--berry); }
 
   /* spinner */
   .spin { display: inline-block; width: 1em; height: 1em; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin .6s linear infinite; }
@@ -193,43 +198,41 @@
       <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
     </div>
     <div class="modal-body">
-      <div style="display:grid;grid-template-columns:140px 1fr;gap:1rem;align-items:start">
-        <div>
-          <img class="img-preview" id="imgPreview" src="" alt="Cake preview">
-          <label class="img-upload-label" for="fileInput">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            Change image
-          </label>
-          <input type="file" id="fileInput" accept="image/webp,image/jpeg">
-          <p id="imgStatus" style="font-size:.75rem;color:var(--muted);margin-top:.3rem;text-align:center"></p>
-        </div>
-        <div>
-          <div class="field">
-            <label for="fName">Cake name</label>
-            <input type="text" id="fName" placeholder="e.g. Blush Ruffle" maxlength="120">
-          </div>
-          <div class="field">
-            <label for="fSub">Short tagline</label>
-            <input type="text" id="fSub" placeholder="e.g. Pearls &amp; gold topper" maxlength="160">
-          </div>
-          <div class="field">
-            <label for="fCat">Category</label>
-            <select id="fCat">
-              <option value="birthday">Birthday</option>
-              <option value="kids">Kids</option>
-              <option value="wedding">Wedding</option>
-              <option value="anniversary">Anniversary</option>
-              <option value="celebration">Celebration</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="fPrice">Price (optional)</label>
-            <input type="text" id="fPrice" placeholder="e.g. ₦45,000" maxlength="80">
-            <p class="hint">Leave blank to show the standard "prices on request" note.</p>
-          </div>
-        </div>
+      <div class="field">
+        <label>Photos <span style="font-weight:400;text-transform:none;font-size:.8rem;color:var(--muted)">(1 required, up to 10)</span></label>
+        <div class="img-slot-wrap" id="imgSlotGrid"></div>
       </div>
-      <div class="field" style="margin-top:.5rem">
+      <div class="field">
+        <label>Video links <span style="font-weight:400;text-transform:none;font-size:.8rem;color:var(--muted)">(optional, 1–3)</span></label>
+        <p class="hint" style="margin-bottom:.5rem">YouTube, Vimeo or any direct video URL</p>
+        <input type="url" id="fVideo0" placeholder="https://…" style="margin-bottom:.4rem">
+        <input type="url" id="fVideo1" placeholder="https://…" style="margin-bottom:.4rem">
+        <input type="url" id="fVideo2" placeholder="https://…">
+      </div>
+      <div class="field">
+        <label for="fName">Cake name</label>
+        <input type="text" id="fName" placeholder="e.g. Blush Ruffle" maxlength="120">
+      </div>
+      <div class="field">
+        <label for="fSub">Short tagline</label>
+        <input type="text" id="fSub" placeholder="e.g. Pearls &amp; gold topper" maxlength="160">
+      </div>
+      <div class="field">
+        <label for="fCat">Category</label>
+        <select id="fCat">
+          <option value="birthday">Birthday</option>
+          <option value="kids">Kids</option>
+          <option value="wedding">Wedding</option>
+          <option value="anniversary">Anniversary</option>
+          <option value="celebration">Celebration</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="fPrice">Price (optional)</label>
+        <input type="text" id="fPrice" placeholder="e.g. ₦45,000" maxlength="80">
+        <p class="hint">Leave blank to show the standard "prices on request" note.</p>
+      </div>
+      <div class="field">
         <label for="fDesc">Description (optional)</label>
         <textarea id="fDesc" placeholder="A short note shown when someone opens the design — style, finish, any details worth highlighting." maxlength="500"></textarea>
       </div>
@@ -264,7 +267,7 @@
   /* ── state ── */
   var cakes = [];
   var editingSlug = null; /* null = new cake */
-  var pendingUpload = null; /* { filename, dataUrl } */
+  var imgSlotData = [];   /* [{img, imgFallback, pending:{filename,dataUrl}|null}] */
   var activeCat = "all";
 
   /* ── dom refs ── */
@@ -283,9 +286,6 @@
   var cancelBtn  = id("cancelBtn");
   var saveBtn    = id("saveBtn");
   var deleteBtn  = id("deleteBtn");
-  var imgPreview = id("imgPreview");
-  var fileInput  = id("fileInput");
-  var imgStatus  = id("imgStatus");
   var toast      = id("toast");
   var toastTimer = null;
 
@@ -468,7 +468,12 @@
     var cake = cakes.find(function (c) { return c.slug === slugVal; });
     if (!cake) return;
     editingSlug = slugVal;
-    pendingUpload = null;
+    imgSlotData = [{img: cake.img || "", imgFallback: cake.imgFallback || "", pending: null}];
+    if (cake.images && cake.images.length) {
+      cake.images.forEach(function (im) {
+        imgSlotData.push({img: im.img || "", imgFallback: im.imgFallback || "", pending: null});
+      });
+    }
     modalTitle.textContent = "Edit cake";
     deleteBtn.style.display = "";
     id("fName").value = cake.name || "";
@@ -479,16 +484,18 @@
     id("fAlt").value = cake.alt || "";
     id("fFeatured").checked = !!cake.featured;
     id("fTall").checked = !!cake.tall;
-    imgPreview.src = "../assets/img/" + (cake.img || "");
-    imgPreview.classList.toggle("has-img", !!cake.img);
-    imgStatus.textContent = "";
+    var vids = cake.videos || [];
+    id("fVideo0").value = vids[0] || "";
+    id("fVideo1").value = vids[1] || "";
+    id("fVideo2").value = vids[2] || "";
+    renderImgSlots();
     overlay.classList.add("is-open");
     id("fName").focus();
   }
 
   function openAdd() {
     editingSlug = null;
-    pendingUpload = null;
+    imgSlotData = [{img: "", imgFallback: "", pending: null}];
     modalTitle.textContent = "Add new cake";
     deleteBtn.style.display = "none";
     id("fName").value = "";
@@ -499,9 +506,10 @@
     id("fAlt").value = "";
     id("fFeatured").checked = false;
     id("fTall").checked = false;
-    imgPreview.src = "";
-    imgPreview.classList.remove("has-img");
-    imgStatus.textContent = "";
+    id("fVideo0").value = "";
+    id("fVideo1").value = "";
+    id("fVideo2").value = "";
+    renderImgSlots();
     overlay.classList.add("is-open");
     id("fName").focus();
   }
@@ -509,7 +517,7 @@
   function closeModal() {
     overlay.classList.remove("is-open");
     editingSlug = null;
-    pendingUpload = null;
+    imgSlotData = [];
   }
 
   addBtn.addEventListener("click", openAdd);
@@ -518,24 +526,58 @@
   overlay.addEventListener("click", function (e) { if (e.target === overlay) closeModal(); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && overlay.classList.contains("is-open")) closeModal(); });
 
-  /* ── image upload ── */
-  fileInput.addEventListener("change", function () {
-    var file = fileInput.files[0];
-    if (!file) return;
-    if (file.size > 3 * 1024 * 1024) { showToast("Image must be under 3 MB", true); return; }
-    var reader = new FileReader();
-    reader.onload = function (e) {
-      imgPreview.src = e.target.result;
-      imgPreview.classList.add("has-img");
-      /* Generate filename from cake name or fallback to timestamp. */
-      var nameVal = id("fName").value.trim();
-      var base = nameVal ? slug(nameVal) : "cake-" + Date.now();
-      var ext = file.type === "image/webp" ? ".webp" : ".jpg";
-      pendingUpload = { filename: base + ext, dataUrl: e.target.result };
-      imgStatus.textContent = "Ready to upload: " + pendingUpload.filename;
-    };
-    reader.readAsDataURL(file);
-  });
+  /* ── image slots ── */
+  function renderImgSlots() {
+    var grid = id("imgSlotGrid");
+    grid.innerHTML = "";
+    imgSlotData.forEach(function (slot, i) {
+      var uid = "sf" + i + "_" + Date.now();
+      var previewSrc = slot.pending ? slot.pending.dataUrl : (slot.img ? "../assets/img/" + slot.img : "");
+      var hasImg = !!previewSrc;
+      var slotEl = document.createElement("div");
+      slotEl.className = "img-slot";
+      slotEl.innerHTML =
+        '<img src="' + esc(previewSrc) + '" class="' + (hasImg ? "has-img" : "") + '" alt="">' +
+        '<label class="img-slot-label" for="' + uid + '">' +
+          '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>' +
+          (hasImg ? "Change" : i === 0 ? "Add image" : "Add") +
+          '<input type="file" id="' + uid + '" accept="image/webp,image/jpeg">' +
+        '</label>';
+      if (i > 0) {
+        var rmBtn = document.createElement("button");
+        rmBtn.type = "button";
+        rmBtn.className = "img-slot-rm";
+        rmBtn.textContent = "Remove";
+        rmBtn.addEventListener("click", (function (idx) { return function () { imgSlotData.splice(idx, 1); renderImgSlots(); }; })(i));
+        slotEl.appendChild(rmBtn);
+      }
+      grid.appendChild(slotEl);
+      document.getElementById(uid).addEventListener("change", (function (idx) {
+        return function (ev) {
+          var file = ev.target.files[0];
+          if (!file) return;
+          if (file.size > 3 * 1024 * 1024) { showToast("Image must be under 3 MB", true); return; }
+          var reader = new FileReader();
+          reader.onload = function (re) {
+            var nameVal = id("fName").value.trim();
+            var base = (nameVal ? slug(nameVal) : "cake") + (idx > 0 ? "-" + idx : "") + "-" + Date.now();
+            var ext = file.type === "image/webp" ? ".webp" : ".jpg";
+            imgSlotData[idx].pending = {filename: base + ext, dataUrl: re.target.result};
+            renderImgSlots();
+          };
+          reader.readAsDataURL(file);
+        };
+      })(i));
+    });
+    if (imgSlotData.length < 10) {
+      var addSlot = document.createElement("button");
+      addSlot.type = "button";
+      addSlot.className = "img-add-slot";
+      addSlot.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><span>Add photo</span>';
+      addSlot.addEventListener("click", function () { imgSlotData.push({img: "", imgFallback: "", pending: null}); renderImgSlots(); });
+      grid.appendChild(addSlot);
+    }
+  }
 
   /* ── save ── */
   saveBtn.addEventListener("click", doSave);
@@ -543,45 +585,52 @@
   function doSave() {
     var nameVal = id("fName").value.trim();
     if (!nameVal) { showToast("Please enter a cake name.", true); id("fName").focus(); return; }
-
+    if (!imgSlotData[0] || (!imgSlotData[0].img && !imgSlotData[0].pending)) {
+      showToast("Please add at least one photo.", true); return;
+    }
     saveBtn.disabled = true;
     saveBtn.innerHTML = '<span class="spin"></span> Saving…';
 
-    var promise = Promise.resolve(null);
-
-    /* Upload image first if one was chosen. */
-    if (pendingUpload) {
-      imgStatus.textContent = "Uploading image…";
-      promise = fetch("/api/upload", {
+    function uploadSlots(i) {
+      if (i >= imgSlotData.length) return Promise.resolve();
+      var slot = imgSlotData[i];
+      if (!slot.pending) return uploadSlots(i + 1);
+      return fetch("/api/upload", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json"},
         credentials: "same-origin",
-        body: JSON.stringify(pendingUpload)
+        body: JSON.stringify(slot.pending)
       }).then(function (r) {
-        return r.json().then(function (d) { return { ok: r.ok, d: d }; });
+        return r.json().then(function (d) { return {ok: r.ok, d: d}; });
       }).then(function (res) {
         if (!res.ok) throw new Error(res.d.error || "Upload failed");
-        imgStatus.textContent = "Uploaded.";
-        return res.d; /* { img, imgFallback } */
+        imgSlotData[i].img = res.d.img;
+        imgSlotData[i].imgFallback = res.d.imgFallback || "";
+        imgSlotData[i].pending = null;
+        return uploadSlots(i + 1);
       });
     }
 
-    promise.then(function (uploadResult) {
+    uploadSlots(0).then(function () {
       var cakeSlug = editingSlug || slug(nameVal);
       var existingCake = cakes.find(function (c) { return c.slug === cakeSlug; });
+      var videos = [id("fVideo0").value.trim(), id("fVideo1").value.trim(), id("fVideo2").value.trim()].filter(Boolean);
+      var extraImgs = imgSlotData.slice(1).filter(function (s) { return s.img; }).map(function (s) { return {img: s.img, imgFallback: s.imgFallback}; });
       var newCake = {
         slug: cakeSlug,
         name: nameVal,
         category: id("fCat").value,
         sub: id("fSub").value.trim(),
         alt: id("fAlt").value.trim(),
-        img: (uploadResult && uploadResult.img) || (existingCake && existingCake.img) || "",
-        imgFallback: (uploadResult && uploadResult.imgFallback) || (existingCake && existingCake.imgFallback) || "",
+        img: imgSlotData[0].img || (existingCake && existingCake.img) || "",
+        imgFallback: imgSlotData[0].imgFallback || (existingCake && existingCake.imgFallback) || "",
         featured: id("fFeatured").checked,
         tall: id("fTall").checked,
         price: id("fPrice").value.trim(),
         description: id("fDesc").value.trim()
       };
+      if (extraImgs.length) newCake.images = extraImgs;
+      if (videos.length) newCake.videos = videos;
 
       if (editingSlug) {
         var idx = cakes.findIndex(function (c) { return c.slug === editingSlug; });
@@ -595,7 +644,6 @@
         }
         cakes.push(newCake);
       }
-
       return saveCatalogue().then(function () {
         closeModal();
         renderGrid();
