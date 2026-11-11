@@ -141,7 +141,6 @@ export default async function handler(req, res) {
 
       /* Sanitise — only keep known fields. */
       const safeFilename = (s) => String(s || "").replace(/[^a-zA-Z0-9._-]/g, "").slice(0, 80);
-      const safeUrl = (s) => { const u = String(s || "").slice(0, 500); return /^https?:\/\//.test(u) ? u : ""; };
       parsed.cakes = parsed.cakes.map((c) => {
         const cake = {
           slug: String(c.slug || "").replace(/[^a-z0-9-]/g, "").slice(0, 80),
@@ -163,7 +162,7 @@ export default async function handler(req, res) {
           })).filter((im) => im.img);
         }
         if (Array.isArray(c.videos) && c.videos.length) {
-          cake.videos = c.videos.slice(0, 3).map(safeUrl).filter(Boolean);
+          cake.videos = c.videos.slice(0, 3).map(safeFilename).filter(Boolean);
         }
         return cake;
       });

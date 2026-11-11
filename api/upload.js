@@ -1,11 +1,14 @@
-/* POST /api/upload — upload a cake image to assets/img/ on GitHub.
+/* POST /api/upload — upload a cake image or video to GitHub.
    Body (JSON):
      { filename: "cake-41.webp", dataUrl: "data:image/webp;base64,..." }
-   Returns:
+   Returns for images:
      { ok: true, img: "cake-41.webp", imgFallback: "cake-41.jpg" }
+   Returns for videos:
+     { ok: true, video: "cake-vid-123.mp4" }
 
-   Only accepts .webp and .jpg/.jpeg files. Requires admin session.
-   Max file size: 3 MB (GitHub API limit is 100 MB but we keep it small).
+   Images: .webp .jpg/.jpeg — stored in assets/img/
+   Videos: .mp4 .mov .webm  — stored in assets/video/ — max 3 MB
+   Requires admin session.
 */
 import { createHmac, timingSafeEqual } from "crypto";
 import { request } from "https";
@@ -13,7 +16,8 @@ import { request } from "https";
 const COOKIE_NAME = "duchess_admin";
 const GITHUB_API = "api.github.com";
 const MAX_BYTES = 3 * 1024 * 1024;
-const ALLOWED_EXT = /\.(webp|jpg|jpeg)$/i;
+const IMG_EXT   = /\.(webp|jpg|jpeg)$/i;
+const VID_EXT   = /\.(mp4|mov|webm)$/i;
 
 /* ── auth (same as catalogue.js) ─────────────────────────────────────── */
 function parseCookie(header) {
@@ -90,23 +94,30 @@ export default async function handler(req, res) {
     const { filename, dataUrl } = parsed;
 
     /* Validate filename */
-    if (!filename || !ALLOWED_EXT.test(filename) || /[/\\]/.test(filename)) {
-      res.status(400).json({ error: "filename must be a .webp or .jpg file" });
+    const isImg = IMG_EXT.test(filename || "");
+    const isVid = VID_EXT.test(filename || "");
+    if (!filename || (!isImg && !isVid) || /[/\\]/.test(filename)) {
+      res.status(400).json({ error: "filename must be .webp/.jpg (image) or .mp4/.mov/.webm (video)" });
       return;
     }
 
     /* Extract base64 from data URL */
-    const match = /^data:image\/(webp|jpeg|jpg);base64,(.+)$/.exec(dataUrl || "");
-    if (!match) { res.status(400).json({ error: "dataUrl must be a base64 image data URL" }); return; }
-
-    const base64 = match[2];
-    if (Buffer.byteLength(base64, "base64") > MAX_BYTES) {
-      res.status(413).json({ error: "Image too large (max 3 MB)" });
+    const mimeRe = isImg
+      ? /^data:image\/(webp|jpeg|jpg);base64,(.+)$/
+      : /^data:video\/(mp4|quicktime|webm);base64,(.+)$/;
+    const match = mimeRe.exec(dataUrl || "");
+    if (!match) {
+      res.status(400).json({ error: "dataUrl MIME type does not match filename extension" });
       return;
     }
 
-    const filePath = `assets/img/${filename}`;
-    const imgFallback = filename.replace(/\.webp$/i, ".jpg");
+    const base64 = match[2];
+    if (Buffer.byteLength(base64, "base64") > MAX_BYTES) {
+      res.status(413).json({ error: (isVid ? "Video" : "Image") + " too large (max 3 MB)" });
+      return;
+    }
+
+    const filePath = isImg ? `assets/img/${filename}` : `assets/video/${filename}`;
 
     try {
       const { status, body: resp } = await ghPut(owner, repo, token, filePath, base64, `admin: upload ${filename}`);
@@ -114,7 +125,11 @@ export default async function handler(req, res) {
         res.status(502).json({ error: `GitHub ${status}: ${JSON.stringify(resp)}` });
         return;
       }
-      res.status(200).json({ ok: true, img: filename, imgFallback });
+      if (isImg) {
+        res.status(200).json({ ok: true, img: filename, imgFallback: filename.replace(/\.webp$/i, ".jpg") });
+      } else {
+        res.status(200).json({ ok: true, video: filename });
+      }
     } catch (e) {
       res.status(502).json({ error: e.message });
     }
