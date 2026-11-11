@@ -801,21 +801,24 @@ section { position: relative; }
   margin: 0;
   border-radius: var(--r-md);
   overflow: hidden;
-  background: var(--pink-100);
+  background: var(--white);
   box-shadow: var(--shadow-sm);
   transform-style: preserve-3d;
   transition: transform .55s var(--ease), box-shadow .55s var(--ease), opacity .4s, filter .4s;
   will-change: transform;
   cursor: zoom-in;
-  aspect-ratio: 3 / 4;
+  display: flex;
+  flex-direction: column;
 }
 .cake.is-hidden {
   display: none;
 }
 .cake img {
+  display: block;
   width: 100%;
-  height: 100%;
+  aspect-ratio: 3 / 4;
   object-fit: cover;
+  flex-shrink: 0;
   transition: transform .9s var(--ease), filter .6s;
   backface-visibility: hidden;
 }
@@ -823,29 +826,23 @@ section { position: relative; }
 .cake:hover img { transform: scale(1.07); }
 
 .cake figcaption {
-  position: absolute;
-  inset: auto 0 0;
-  padding: 2.6rem 1.1rem 1.05rem;
-  background: linear-gradient(180deg, transparent, rgba(53, 16, 26, .82));
-  color: var(--cream-50);
-  transform: translateY(12px);
-  opacity: 0;
-  transition: opacity .45s var(--ease), transform .45s var(--ease);
+  padding: .85rem 1rem .9rem;
+  background: var(--white);
+  color: var(--plum-900);
 }
-.cake:hover figcaption,
-.cake:focus-within figcaption { opacity: 1; transform: none; }
 
 .cake figcaption strong {
   display: block;
   font-family: var(--font-display);
-  font-size: 1.04rem;
+  font-size: 1rem;
   font-weight: 500;
 }
 .cake figcaption span {
-  font-size: .76rem;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: var(--pink-200);
+  display: block;
+  margin-top: .2rem;
+  font-size: .75rem;
+  letter-spacing: .04em;
+  color: var(--ink-soft);
 }
 
 .cake__tag {
@@ -860,35 +857,33 @@ section { position: relative; }
   letter-spacing: .1em;
   text-transform: uppercase;
   color: var(--plum-800);
-  opacity: 0;
-  transform: translateY(-6px);
-  transition: opacity .4s var(--ease), transform .4s var(--ease);
 }
-.cake:hover .cake__tag { opacity: 1; transform: none; }
 
-/* The caption is the card's only tab stop, so this button has to be reachable
-   even while the caption is still faded out. */
 .cake__view {
-  margin-top: .75rem;
+  display: inline-block;
+  margin-top: .8rem;
   padding: .42rem .95rem;
   border-radius: var(--r-pill);
-  background: var(--cream-50);
+  background: var(--pink-100);
   color: var(--plum-900);
   font-size: .76rem;
   font-weight: 600;
   letter-spacing: .03em;
-  transition: background .3s var(--ease), color .3s var(--ease);
+  cursor: pointer;
+  transition: background .3s var(--ease);
 }
-.cake__view:hover { background: var(--pink-300); }
-.cake:focus-within .cake__view:focus-visible {
-  outline: 2px solid var(--cream-50);
+.cake__view:hover { background: var(--pink-200); }
+.cake__view:focus-visible {
+  outline: 2px solid var(--plum-900);
   outline-offset: 2px;
 }
 
 /* make a few cells span for rhythm */
 @media (min-width: 760px) {
-  .cake--wide { grid-column: span 2; aspect-ratio: 3 / 2.1; }
-  .cake--tall { grid-row: span 2; aspect-ratio: auto; }
+  .cake--wide { grid-column: span 2; }
+  .cake--wide img { aspect-ratio: 3 / 2.1; }
+  .cake--tall { grid-row: span 2; align-self: stretch; }
+  .cake--tall img { flex: 1; min-height: 0; aspect-ratio: unset; height: auto; }
 }
 
 /* ===================== small chops ===================== */
